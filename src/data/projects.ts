@@ -18,79 +18,91 @@ export interface Project {
 	visitUrl?: string; // 添加前往项目链接字段
 }
 
+/*
+export const skills: Skill[] = [
+  {
+    name: '技能名称',
+    category: 'frontend', // 技能分类
+    level: 90, // 技能等级 (0-100)
+    icon: 'skill-icons:javascript', // 图标名称
+    description: '技能描述',
+    experience: '3年', // 经验时长
+    projects: ['project-1', 'project-2'], // 相关项目ID
+    certifications: [ // 可选：相关认证
+      {
+        name: '认证名称',
+        issuer: '颁发机构',
+        date: '2023-01-01',
+        url: 'https://certification-url.com'
+      }
+    ]
+  }
+];
+*/
+
 export const projectsData: Project[] = [
 	{
-		id: "mizuki-blog",
-		title: "Mizuki Blog Theme",
+		id: "0721",
+		title: "0721",
 		description:
-			"Modern blog theme developed based on the Astro framework, supporting multilingual, dark mode, and responsive design features.",
+			"基于Rust的Windows自动化工具服务器，提供丰富的系统交互能力，支持MCP协议。",
 		image: "",
-		category: "web",
-		techStack: ["Astro", "TypeScript", "Tailwind CSS", "Svelte"],
+		category: "desktop",
+		techStack: ["Rust", "PowerShell", "MCP Protocol"],
 		status: "completed",
-		liveDemo: "https://blog.example.com",
-		sourceCode: "https://github.com/example/mizuki", // 更改为GitHub链接
-		visitUrl: "https://blog.example.com", // 添加前往项目链接
-		startDate: "2024-01-01",
-		endDate: "2024-06-01",
+		liveDemo: "",
+		sourceCode: "https://github.com/Roxy-DD/0721", // 更改为GitHub链接
+		visitUrl: "", // 添加前往项目链接
+		startDate: "2025-10-22",
+		endDate: "",
 		featured: true,
-		tags: ["Blog", "Theme", "Open Source"],
+		tags: ["Rust", "MCP", "AI"],
 	},
 	{
-		id: "portfolio-website",
-		title: "Personal Portfolio",
+		id: "Bilibili2Bangumi",
+		title: "Bilibili2Bangumi",
 		description:
-			"Personal portfolio website showcasing project experience and technical skills.",
+			"一个将B站追番列表同步到Bangumi的工具",
 		image: "",
-		category: "web",
-		techStack: ["React", "Next.js", "TypeScript", "Framer Motion"],
+		category: "desktop",
+		techStack: ["Python", "Bangumi API", "Bilibili API"],
 		status: "completed",
-		liveDemo: "https://portfolio.example.com",
-		sourceCode: "https://github.com/example/portfolio",
-		visitUrl: "https://portfolio.example.com", // 添加前往项目链接
-		startDate: "2023-09-01",
-		endDate: "2023-12-01",
+		liveDemo: "",
+		sourceCode: "https://github.com/Roxy-DD/Bilibili2Bangumi",
+		visitUrl: "", // 添加前往项目链接
+		startDate: "2025-04-11",
+		endDate: "",
 		featured: true,
-		tags: ["Portfolio", "React", "Animation"],
+		tags: ["Python", "Animation"],
 	},
 	{
-		id: "task-manager-app",
-		title: "Task Manager App",
+		id: "obsidian-git-sync",
+		title: "obsidian-git-sync",
 		description:
-			"Cross-platform task management application supporting team collaboration and project management.",
+			"一个为Obsidian设计的Git同步插件,可以帮助您轻松地将Obsidian笔记与Git仓库同步。",
 		image: "",
-		category: "mobile",
-		techStack: ["React Native", "TypeScript", "Redux", "Firebase"],
-		status: "in-progress",
-		startDate: "2024-03-01",
-		tags: ["Mobile", "Productivity", "Team Collaboration"],
-	},
-	{
-		id: "data-visualization-tool",
-		title: "Data Visualization Tool",
-		description:
-			"Data visualization tool supporting multiple chart types and interactive analysis.",
-		image: "",
-		category: "web",
-		techStack: ["Vue.js", "D3.js", "TypeScript", "Node.js"],
+		category: "desktop",
+		techStack: ["TypeScript", "Obsidian API", "Git", "Node.js"],
 		status: "completed",
-		liveDemo: "https://dataviz.example.com",
-		visitUrl: "https://dataviz.example.com", // 添加前往项目链接
-		startDate: "2023-06-01",
-		endDate: "2023-11-01",
-		tags: ["Data Visualization", "Analytics", "Charts"],
+		sourceCode: "https://github.com/Roxy-DD/obsidian-git-sync",
+		startDate: "2022-1-24",
+		tags: ["Obsidian", "Git", "Plugin", "TypeScript", "Node.js"],
 	},
 	{
-		id: "e-commerce-platform",
-		title: "E-commerce Platform",
+		id: "mapview",
+		title: "mapview",
 		description:
-			"Full-stack e-commerce platform including user management, product management, and order processing features.",
+			"一个streamlist的地图标点工具",
 		image: "",
 		category: "web",
-		techStack: ["Next.js", "Node.js", "PostgreSQL", "Stripe"],
-		status: "planned",
-		startDate: "2024-07-01",
-		tags: ["E-commerce", "Full Stack", "Payment Integration"],
+		techStack: ["Python", "Streamlit"],
+		status: "completed",
+		liveDemo: "",
+		sourceCode: "https://github.com/Roxy-DD/mapview",
+		visitUrl: "", // 添加前往项目链接
+		startDate: "2022-01-24",
+		endDate: "",
+		tags: ["Python", "Streamlit", "Map", "Data Visualization"],
 	},
 ];
 
