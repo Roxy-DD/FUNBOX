@@ -2,10 +2,13 @@
 title: Rust参考
 description: "Rust学习的相关资源参考"
 published: 2025-11-06
+tags: [Rust]
+category: 参考
+licenseName: "MIT"
+draft: false
+date: 2025-11-06
+pubDate: 2025-11-06
 ---
-
-
-
 # 参考
 
 [Rust 程序设计语言 - Rust 程序设计语言 简体中文版](https://kaisery.github.io/trpl-zh-cn/ "Rust 程序设计语言 - Rust 程序设计语言 简体中文版")
