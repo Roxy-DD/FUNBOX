@@ -23,189 +23,162 @@ export interface TimelineItem {
 	featured?: boolean;
 }
 
+/*
+export const timelineEvents: TimelineEvent[] = [
+  {
+    id: 'event-1',
+    title: '事件标题',
+    description: '事件描述，支持 Markdown 格式',
+    date: new Date('2023-01-01'),
+    type: 'work', // 事件类型
+    icon: 'mdi:briefcase', // 图标名称
+    location: '地点', // 可选
+    organization: '组织/公司', // 可选
+    tags: ['标签1', '标签2'], // 可选
+    links: [ // 可选：相关链接
+      {
+        title: '链接标题',
+        url: 'https://example.com'
+      }
+    ],
+    achievements: [ // 可选：成就列表
+      '成就描述1',
+      '成就描述2'
+    ]
+  }
+];
+*/
+
 export const timelineData: TimelineItem[] = [
 	{
-		id: "current-study",
-		title: "Studying Computer Science and Technology",
+		id: "edu-1",
+		title: "计算机科学与技术本科",
 		description:
-			"Currently studying Computer Science and Technology, focusing on web development and software engineering.",
+		"信息工程学院 · 主修计算机科学、算法设计、网络与系统开发课程。",
 		type: "education",
-		startDate: "2022-09-01",
-		location: "Beijing",
-		organization: "Beijing Institute of Technology",
-		skills: ["Java", "Python", "JavaScript", "HTML/CSS", "MySQL"],
-		achievements: [
-			"Current GPA: 3.6/4.0",
-			"Completed data structures and algorithms course project",
-			"Participated in multiple course project developments",
-		],
-		icon: "material-symbols:school",
-		color: "#059669",
-		featured: true,
+		organization: "西北工业大学明德学院",
+		location: "西安",
+		startDate: "2022-09",
+		icon: "mdi:school-outline",
+		color: "#4F46E5",
 	},
 	{
-		id: "mizuki-blog-project",
-		title: "Mizuki Personal Blog Project",
+		id: "proj-1",
+		title: "Obsidian Git Sync 插件",
 		description:
-			"A personal blog website developed using the Astro framework as a practical project for learning frontend technologies.",
+		"为 Obsidian 笔记用户打造的全自动化 Git 同步解决方案。智能监测笔记变更，自动执行 commit、push、pull 操作，支持全平台与冲突可视化处理。",
 		type: "project",
-		startDate: "2024-06-01",
-		endDate: "2024-08-01",
-		skills: ["Astro", "TypeScript", "Tailwind CSS", "Git"],
-		achievements: [
-			"Mastered modern frontend development tech stack",
-			"Learned responsive design and user experience optimization",
-			"Completed the full process from design to deployment",
+		organization: "GitHub 开源项目",
+		position: "Node.js 开发工程师",
+		skills: [
+		"skill-icons:nodejs-dark",
+		"skill-icons:javascript",
+		"skill-icons:git",
+		"skill-icons:obsidian",
+		"skill-icons:linux-dark",
 		],
 		links: [
-			{
-				name: "GitHub Repository",
-				url: "https://github.com/example/mizuki-blog",
-				type: "project",
-			},
-			{
-				name: "Live Demo",
-				url: "https://mizuki-demo.example.com",
-				type: "website",
-			},
+		{
+			name: "GitHub 项目",
+			url: "https://github.com/Roxy-DD/obsidian-git-sync", // 👉 建议补上真实链接
+			type: "project",
+		},
 		],
-		icon: "material-symbols:code",
-		color: "#7C3AED",
-		featured: true,
+		startDate: "2023-06",
+		endDate: "2023-09",
+		icon: "mdi:git",
+		color: "#F59E0B",
 	},
 	{
-		id: "summer-internship-2024",
-		title: "Frontend Development Intern",
+		id: "proj-2",
+		title: "Bilibili2Bangumi 同步工具",
 		description:
-			"Summer internship at an internet company, participating in frontend development of web applications.",
-		type: "work",
-		startDate: "2024-07-01",
-		endDate: "2024-08-31",
-		location: "Beijing",
-		organization: "TechStart Internet Company",
-		position: "Frontend Development Intern",
-		skills: ["React", "JavaScript", "CSS3", "Git", "Figma"],
-		achievements: [
-			"Completed user interface component development",
-			"Learned team collaboration and code standards",
-			"Received outstanding internship performance certificate",
-		],
-		icon: "material-symbols:work",
-		color: "#DC2626",
-		featured: true,
-	},
-	{
-		id: "web-development-course",
-		title: "Completed Web Development Online Course",
-		description:
-			"Completed a full-stack web development online course, systematically learning frontend and backend development technologies.",
-		type: "achievement",
-		startDate: "2024-01-15",
-		endDate: "2024-05-30",
-		organization: "Mooc Website",
-		skills: ["HTML", "CSS", "JavaScript", "Node.js", "Express"],
-		achievements: [
-			"Received course completion certificate",
-			"Completed 5 practical projects",
-			"Mastered full-stack development fundamentals",
+		"打通 B 站与 Bangumi 的数据壁垒，实现追番记录、评分、进度的双向同步。支持全量迁移与增量同步，内置数据校验与可视化对比。",
+		type: "project",
+		organization: "GitHub 开源项目",
+		position: "Python 开发工程师",
+		skills: [
+		"skill-icons:python-dark",
+		"skill-icons:github-dark",
+		"skill-icons:json",
+		"skill-icons:api",
 		],
 		links: [
-			{
-				name: "Course Certificate",
-				url: "https://certificates.example.com/web-dev",
-				type: "certificate",
-			},
+		{
+			name: "GitHub 项目",
+			url: "https://github.com/Roxy-DD/Bilibili2Bangumi",
+			type: "project",
+		},
 		],
-		icon: "material-symbols:verified",
-		color: "#059669",
+		startDate: "2024-01",
+		endDate: "2024-05",
+		icon: "mdi:code-braces",
+		color: "#3B82F6",
 	},
 	{
-		id: "student-management-system",
-		title: "Student Management System Course Project",
+		id: "proj-3",
+		title: "地图数据处理与路径优化可视化平台",
 		description:
-			"Final project for the database course, developed a complete student information management system.",
+		"大学生数字建模大赛项目。高效处理 20万+ 地理数据点，集成数据清洗、异常修正、路径规划与可视化模块，用于物流与导航优化场景。",
 		type: "project",
-		startDate: "2023-11-01",
-		endDate: "2023-12-15",
-		skills: ["Java", "MySQL", "Swing", "JDBC"],
-		achievements: [
-			"Received excellent course project grade",
-			"Implemented complete CRUD functionality",
-			"Learned database design and optimization",
+		organization: "大学生数字建模大赛",
+		position: "大数据架构师",
+		skills: [
+		"skill-icons:python-dark",
+		"skill-icons:pandas-dark",
+		"skill-icons:matplotlib-dark",
+		"skill-icons:visualstudio-dark",
 		],
-		icon: "material-symbols:database",
-		color: "#EA580C",
+		startDate: "2024-09",
+		endDate: "2024-10",
+		icon: "mdi:map-outline",
+		color: "#10B981",
 	},
 	{
-		id: "programming-contest",
-		title: "University Programming Contest",
-		description:
-			"Participated in a programming contest held by the university, improving algorithm and programming skills.",
+		id: "award-1",
+		title: "大学生创新创业大赛",
+		description: "省级立项项目《生命体征监测设备级系统》。",
 		type: "achievement",
-		startDate: "2023-10-20",
-		location: "Beijing Institute of Technology",
-		organization: "School of Computer Science",
-		skills: ["C++", "Algorithms", "Data Structures"],
-		achievements: [
-			"Won third prize in university contest",
-			"Improved algorithmic thinking ability",
-			"Strengthened programming fundamentals",
-		],
-		icon: "material-symbols:emoji-events",
-		color: "#7C3AED",
+		startDate: "2024-06",
+		endDate: "2024-10",
+		achievements: ["省级立项项目"],
+		icon: "mdi:lightbulb-on-outline",
+		color: "#EAB308",
 	},
 	{
-		id: "part-time-tutor",
-		title: "Part-time Programming Tutor",
-		description:
-			"Provided programming tutoring for high school students, helping them learn Python basics.",
-		type: "work",
-		startDate: "2023-09-01",
-		endDate: "2024-01-31",
-		position: "Programming Tutor",
-		skills: ["Python", "Teaching", "Communication"],
-		achievements: [
-			"Helped 3 students master Python basics",
-			"Improved expression and communication skills",
-			"Gained teaching experience",
-		],
-		icon: "material-symbols:school",
-		color: "#059669",
+		id: "award-2",
+		title: "传智杯程序设计赛道",
+		description: "国家级三等奖。",
+		type: "achievement",
+		startDate: "2024-08",
+		endDate: "2024-10",
+		achievements: ["国家级三等奖"],
+		icon: "mdi:trophy-outline",
+		color: "#F97316",
 	},
 	{
-		id: "high-school-graduation",
-		title: "High School Graduation",
-		description:
-			"Graduated from high school with excellent grades and was admitted to the Computer Science and Technology program at Beijing Institute of Technology.",
-		type: "education",
-		startDate: "2019-09-01",
-		endDate: "2022-06-30",
-		location: "Jinan, Shandong",
-		organization: "No.1 High School of Jinan",
-		achievements: [
-			"College entrance exam score: 620",
-			"Received municipal model student award",
-			"Won provincial second prize in math competition",
-		],
-		icon: "material-symbols:school",
-		color: "#2563EB",
+		id: "award-3",
+		title: "传智杯 AIGC 赛道",
+		description: "省级三等奖。",
+		type: "achievement",
+		startDate: "2024-08",
+		endDate: "2024-10",
+		achievements: ["省级三等奖"],
+		icon: "mdi:robot-outline",
+		color: "#A855F7",
 	},
 	{
-		id: "first-programming-experience",
-		title: "First Programming Experience",
-		description:
-			"First encountered programming in high school IT class, started learning Python basic syntax.",
-		type: "education",
-		startDate: "2021-03-01",
-		skills: ["Python", "Basic Programming Concepts"],
-		achievements: [
-			'Completed first "Hello World" program',
-			"Learned basic loops and conditional statements",
-			"Developed interest in programming",
-		],
-		icon: "material-symbols:code",
-		color: "#7C3AED",
+		id: "award-4",
+		title: "CTF 铁人三项竞赛（Web方向）",
+		description: "校级三等奖。",
+		type: "achievement",
+		startDate: "2024-04",
+		endDate: "2024-06",
+		achievements: ["校级三等奖"],
+		icon: "mdi:shield-lock-outline",
+		color: "#06B6D4",
 	},
+
 
 ];
 

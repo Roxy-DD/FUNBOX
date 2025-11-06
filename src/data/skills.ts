@@ -17,6 +17,29 @@ export interface Skill {
 	color?: string; // Skill card theme color
 }
 
+/*
+export const skills: Skill[] = [
+  {
+    name: '技能名称',
+    category: 'frontend', // 技能分类
+    level: 90, // 技能等级 (0-100)
+    icon: 'skill-icons:javascript', // 图标名称
+    description: '技能描述',
+    experience: '3年', // 经验时长
+    projects: ['project-1', 'project-2'], // 相关项目ID
+    certifications: [ // 可选：相关认证
+      {
+        name: '认证名称',
+        issuer: '颁发机构',
+        date: '2023-01-01',
+        url: 'https://certification-url.com'
+      }
+    ]
+  }
+];
+*/
+
+
 export const skillsData: Skill[] = [
 	// Frontend Skills
 	{
