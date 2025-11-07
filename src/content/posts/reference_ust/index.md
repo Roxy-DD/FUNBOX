@@ -4,7 +4,6 @@ description: "Rust学习的相关资源参考"
 published: 2025-11-06
 tags: [Rust, 参考资料]
 category: Rust笔记
-licenseName: "MIT"
 draft: false
 date: 2025-11-06
 pubDate: 2025-11-06
