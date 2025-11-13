@@ -1,5 +1,6 @@
 {
   "tags": [
+    "AI",
     "Go",
     "Rust",
     "SQL",
@@ -9,6 +10,7 @@
     "参考资料"
   ],
   "categories": [
+    "AI工具",
     "Go笔记",
     "Rust笔记",
     "Unity笔记",
