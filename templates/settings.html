@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}系统设置 - Mizuka Blog Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-gear me-2"></i>系统设置</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-folder me-2"></i>路径配置</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="posts_dir" class="form-label">文章目录路径</label>
+                        <input type="text" class="form-control" id="posts_dir" name="posts_dir" value="{{ posts_dir }}" required>
+                        <div class="form-text">指定存储Markdown文章的目录路径</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>保存设置
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>系统信息</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>当前文章目录:</strong></p>
+                        <p class="text-muted">{{ posts_dir }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>系统状态:</strong></p>
+                        <p class="text-success">
+                            <i class="bi bi-check-circle me-1"></i>运行正常
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>统计信息</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        总文章数
+                        <span class="badge bg-primary rounded-pill">{{ total_posts }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        草稿文章
+                        <span class="badge bg-warning rounded-pill">{{ draft_posts }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        置顶文章
+                        <span class="badge bg-info rounded-pill">{{ pinned_posts }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        标签数量
+                        <span class="badge bg-success rounded-pill">{{ tags_count }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        分类数量
+                        <span class="badge bg-secondary rounded-pill">{{ categories_count }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-question-circle me-2"></i>帮助</h5>
+            </div>
+            <div class="card-body">
+                <p class="small">在路径配置中，您可以指定存储Markdown文章的目录路径。更改路径后，系统将自动重新加载文章数据。</p>
+                <p class="small">确保指定的目录存在且包含有效的Markdown文章文件。</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

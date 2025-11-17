@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "编辑" if post_id else "创建" }}文章 - Mizuka Blog Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-{{ 'pencil-square' if post_id else 'plus-circle' }} me-2"></i>
+        {{ "编辑" if post_id else "创建" }}文章
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('manage_posts') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>返回文章管理
+        </a>
+    </div>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+</div>
+{% endif %}
+
+{% if success %}
+<div class="alert alert-success">
+    <i class="bi bi-check-circle me-2"></i>{{ success }}
+</div>
+{% endif %}
+
+<form method="post" id="post-form">
+    <!-- 基本信息 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>基本信息</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <label for="title" class="form-label">文章标题 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="title" name="title" 
+                           value="{{ post.title if post else '' }}" required>
+                    <div class="form-text">文章将显示的标题</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="folder_name" class="form-label">文件夹名称 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="folder_name" name="folder_name" 
+                           value="{{ post.folder if post else '' }}" required>
+                    <div class="form-text">文章文件夹名称，只能包含字母、数字和连字符</div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="excerpt" class="form-label">文章摘要</label>
+                    <textarea class="form-control" id="excerpt" name="excerpt" rows="2">{{ post.excerpt if post else '' }}</textarea>
+                    <div class="form-text">简短描述文章内容，用于SEO和文章列表显示</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分类和标签 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-tags me-2"></i>分类和标签</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="category" class="form-label">文章分类</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">无分类</option>
+                        {% for category in categories %}
+                        <option value="{{ category }}" {{ 'selected' if post and post.category == category else '' }}>{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="tags" class="form-label">文章标签</label>
+                    <input type="text" class="form-control" id="tags" name="tags" 
+                           value="{{ post.tags|join(', ') if post else '' }}">
+                    <div class="form-text">多个标签用逗号分隔</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="author" class="form-label">作者</label>
+                    <input type="text" class="form-control" id="author" name="author" 
+                           value="{{ post.author if post else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label for="layout" class="form-label">布局模板</label>
+                    <select class="form-select" id="layout" name="layout">
+                        <option value="post" {{ 'selected' if post and post.layout == 'post' else '' }}>post</option>
+                        <option value="page" {{ 'selected' if post and post.layout == 'page' else '' }}>page</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发布设置 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-gear me-2"></i>发布设置</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="date" class="form-label">发布日期</label>
+                    <input type="date" class="form-control" id="date" name="date" 
+                           value="{{ post.date if post else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="time" class="form-label">发布时间</label>
+                    <input type="time" class="form-control" id="time" name="time" 
+                           value="{{ post.time if post else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="permalink" class="form-label">永久链接</label>
+                    <input type="text" class="form-control" id="permalink" name="permalink" 
+                           value="{{ post.permalink if post else '' }}">
+                    <div class="form-text">可选，自定义URL路径</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" id="draft" name="draft" 
+                               {{ 'checked' if post and post.draft else '' }}>
+                        <label class="form-check-label" for="draft">保存为草稿</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="pinned" name="pinned" 
+                               {{ 'checked' if post and post.pinned else '' }}>
+                        <label class="form-check-label" for="pinned">置顶文章</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文章内容 -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-file-text me-2"></i>文章内容</h5>
+            <div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="preview-toggle">
+                    <i class="bi bi-eye me-1"></i>预览
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="editor-container">
+                <textarea class="form-control" id="content" name="content" rows="20">{{ post.content if post else '' }}</textarea>
+            </div>
+            <div id="preview-container" style="display: none;">
+                <div id="markdown-preview" class="border p-3 bg-light"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提交按钮 -->
+    <div class="d-flex justify-content-between">
+        <a href="{{ url_for('manage_posts') }}" class="btn btn-secondary">
+            <i class="bi bi-x-circle me-2"></i>取消
+        </a>
+        <div>
+            {% if post_id %}
+            <button type="submit" name="save_draft" class="btn btn-warning me-2">
+                <i class="bi bi-save me-2"></i>保存草稿
+            </button>
+            {% endif %}
+            <button type="submit" name="publish" class="btn btn-success">
+                <i class="bi bi-check-circle me-2"></i>{{ "更新" if post_id else "发布" }}
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 标题自动生成文件夹名
+    const titleInput = document.getElementById('title');
+    const folderInput = document.getElementById('folder_name');
+    
+    titleInput.addEventListener('input', function() {
+        if (!folderInput.value || folderInput.dataset.autoGenerated === 'true') {
+            // 转换为小写，替换空格和特殊字符为连字符
+            let folderName = this.value.toLowerCase()
+                .replace(/[^\w\s-]/g, '')  // 移除特殊字符
+                .replace(/\s+/g, '-')      // 空格替换为连字符
+                .replace(/-+/g, '-')       // 多个连字符合并为一个
+                .replace(/^-|-$/g, '');    // 移除开头和结尾的连字符
+            
+            folderInput.value = folderName;
+            folderInput.dataset.autoGenerated = 'true';
+        }
+    });
+    
+    // 手动修改文件夹名时，标记为非自动生成
+    folderInput.addEventListener('input', function() {
+        this.dataset.autoGenerated = 'false';
+    });
+    
+    // 预览切换
+    const previewToggle = document.getElementById('preview-toggle');
+    const editorContainer = document.getElementById('editor-container');
+    const previewContainer = document.getElementById('preview-container');
+    const contentTextarea = document.getElementById('content');
+    const markdownPreview = document.getElementById('markdown-preview');
+    
+    previewToggle.addEventListener('click', function() {
+        const isPreview = previewContainer.style.display !== 'none';
+        
+        if (isPreview) {
+            // 切换到编辑模式
+            editorContainer.style.display = 'block';
+            previewContainer.style.display = 'none';
+            this.innerHTML = '<i class="bi bi-eye me-1"></i>预览';
+        } else {
+            // 切换到预览模式
+            editorContainer.style.display = 'none';
+            previewContainer.style.display = 'block';
+            this.innerHTML = '<i class="bi bi-pencil me-1"></i>编辑';
+            
+            // 简单的Markdown预览（实际应用中应使用专门的Markdown解析库）
+            let content = contentTextarea.value;
+            // 这里应该使用marked.js或其他Markdown解析库
+            // 现在只是简单地显示原始内容
+            markdownPreview.innerHTML = '<pre>' + content + '</pre>';
+        }
+    });
+    
+    // 设置当前日期和时间
+    const dateInput = document.getElementById('date');
+    const timeInput = document.getElementById('time');
+    
+    if (!dateInput.value) {
+        const now = new Date();
+        dateInput.value = now.toISOString().split('T')[0];
+        timeInput.value = now.toTimeString().slice(0, 5);
+    }
+});
+</script>
+{% endblock %}

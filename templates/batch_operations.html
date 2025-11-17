@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block title %}批量操作 - Mizuka Blog Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-lightning me-2"></i>批量操作
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('manage_posts') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>返回文章管理
+        </a>
+    </div>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+</div>
+{% endif %}
+
+{% if success %}
+<div class="alert alert-success">
+    <i class="bi bi-check-circle me-2"></i>{{ success }}
+</div>
+{% endif %}
+
+<!-- 文章选择 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-check-square me-2"></i>选择文章</h5>
+    </div>
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="selectAllPosts">
+                <label class="form-check-label" for="selectAllPosts">
+                    全选所有文章 ({{ posts|length }})
+                </label>
+            </div>
+            <div>
+                <span class="badge bg-primary">已选择: <span id="selectedCount">0</span></span>
+            </div>
+        </div>
+        
+        {% if posts %}
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card">
+                    <div class="card-body p-2">
+                        <div class="form-check">
+                            <input class="form-check-input post-checkbox" type="checkbox" 
+                                   value="{{ post.folder }}" id="post-{{ post.folder }}">
+                            <label class="form-check-label w-100" for="post-{{ post.folder }}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>{{ post.title }}</strong>
+                                        <div class="small text-muted">{{ post.folder }}</div>
+                                        <div class="mt-1">
+                                            {% if post.category %}
+                                            <span class="badge bg-primary">{{ post.category }}</span>
+                                            {% endif %}
+                                            {% if post.draft %}
+                                            <span class="badge bg-warning">草稿</span>
+                                            {% else %}
+                                            <span class="badge bg-success">已发布</span>
+                                            {% endif %}
+                                            {% if post.pinned %}
+                                            <span class="badge bg-info">置顶</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-inbox display-4 text-muted"></i>
+            <h5 class="mt-2 text-muted">没有可操作的文章</h5>
+            <a href="{{ url_for('create_post') }}" class="btn btn-success">创建新文章</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 批量操作选项 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-gear me-2"></i>批量操作选项</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" id="batch-form">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h6>状态操作</h6>
+                    <div class="d-grid gap-2">
+                        <button type="submit" name="action" value="publish" class="btn btn-success">
+                            <i class="bi bi-check-circle me-2"></i>批量发布
+                        </button>
+                        <button type="submit" name="action" value="draft" class="btn btn-warning">
+                            <i class="bi bi-file-earmark me-2"></i>转为草稿
+                        </button>
+                        <button type="submit" name="action" value="pin" class="btn btn-info">
+                            <i class="bi bi-pin-angle me-2"></i>批量置顶
+                        </button>
+                        <button type="submit" name="action" value="unpin" class="btn btn-secondary">
+                            <i class="bi bi-pin-angle me-2"></i>取消置顶
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <h6>内容操作</h6>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#renameModal">
+                            <i class="bi bi-pencil me-2"></i>批量重命名
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                            <i class="bi bi-tags me-2"></i>批量设置分类
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#tagsModal">
+                            <i class="bi bi-tag me-2"></i>批量添加标签
+                        </button>
+                        <button type="submit" name="action" value="delete" class="btn btn-danger">
+                            <i class="bi bi-trash me-2"></i>批量删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 隐藏字段，用于传递选中的文章 -->
+            <input type="hidden" id="selected_posts" name="selected_posts" value="">
+        </form>
+    </div>
+</div>
+
+<!-- 重命名模态框 -->
+<div class="modal fade" id="renameModal" tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="renameModalLabel">批量重命名文章</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rename-form">
+                    <div class="mb-3">
+                        <label for="rename_pattern" class="form-label">重命名模式</label>
+                        <input type="text" class="form-control" id="rename_pattern" name="rename_pattern" 
+                               placeholder="例如: 新标题-{index}">
+                        <div class="form-text">使用 {index} 作为序号占位符，例如: "文章-{index}"</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rename_start" class="form-label">起始序号</label>
+                        <input type="number" class="form-control" id="rename_start" name="rename_start" value="1">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirm-rename">确认重命名</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 分类设置模态框 -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalLabel">批量设置分类</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="category-form">
+                    <div class="mb-3">
+                        <label for="batch_category" class="form-label">选择分类</label>
+                        <select class="form-select" id="batch_category" name="batch_category">
+                            <option value="">清除分类</option>
+                            {% for category in categories %}
+                            <option value="{{ category }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirm-category">确认设置</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 标签添加模态框 -->
+<div class="modal fade" id="tagsModal" tabindex="-1" aria-labelledby="tagsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tagsModalLabel">批量添加标签</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="tags-form">
+                    <div class="mb-3">
+                        <label for="batch_tags" class="form-label">标签列表</label>
+                        <input type="text" class="form-control" id="batch_tags" name="batch_tags" 
+                               placeholder="标签1, 标签2, 标签3">
+                        <div class="form-text">多个标签用逗号分隔</div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="replace_tags" name="replace_tags">
+                        <label class="form-check-label" for="replace_tags">
+                            替换现有标签（否则将追加到现有标签）
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirm-tags">确认添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllPosts = document.getElementById('selectAllPosts');
+    const postCheckboxes = document.querySelectorAll('.post-checkbox');
+    const selectedCount = document.getElementById('selectedCount');
+    const selectedPostsInput = document.getElementById('selected_posts');
+    const batchForm = document.getElementById('batch-form');
+    
+    // 更新选中数量
+    function updateSelectedCount() {
+        const checked = document.querySelectorAll('.post-checkbox:checked');
+        selectedCount.textContent = checked.length;
+        
+        // 更新隐藏字段
+        const selectedIds = Array.from(checked).map(cb => cb.value);
+        selectedPostsInput.value = selectedIds.join(',');
+    }
+    
+    // 全选/取消全选
+    selectAllPosts.addEventListener('change', function() {
+        postCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        updateSelectedCount();
+    });
+    
+    // 单个复选框变化
+    postCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedCount);
+    });
+    
+    // 表单提交前验证
+    batchForm.addEventListener('submit', function(e) {
+        const checked = document.querySelectorAll('.post-checkbox:checked');
+        if (checked.length === 0) {
+            e.preventDefault();
+            alert('请至少选择一篇文章进行操作');
+            return;
+        }
+        
+        const action = e.submitter.value;
+        if (action === 'delete') {
+            if (!confirm(`确定要删除选中的 ${checked.length} 篇文章吗？此操作不可撤销！`)) {
+                e.preventDefault();
+                return;
+            }
+        }
+    });
+    
+    // 重命名确认
+    document.getElementById('confirm-rename').addEventListener('click', function() {
+        const pattern = document.getElementById('rename_pattern').value;
+        if (!pattern) {
+            alert('请输入重命名模式');
+            return;
+        }
+        
+        const checked = document.querySelectorAll('.post-checkbox:checked');
+        if (checked.length === 0) {
+            alert('请至少选择一篇文章');
+            return;
+        }
+        
+        const start = parseInt(document.getElementById('rename_start').value) || 1;
+        const selectedIds = Array.from(checked).map(cb => cb.value);
+        
+        // 创建表单并提交
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.style.display = 'none';
+        
+        const actionInput = document.createElement('input');
+        actionInput.name = 'action';
+        actionInput.value = 'rename';
+        form.appendChild(actionInput);
+        
+        const selectedInput = document.createElement('input');
+        selectedInput.name = 'selected_posts';
+        selectedInput.value = selectedIds.join(',');
+        form.appendChild(selectedInput);
+        
+        const patternInput = document.createElement('input');
+        patternInput.name = 'rename_pattern';
+        patternInput.value = pattern;
+        form.appendChild(patternInput);
+        
+        const startInput = document.createElement('input');
+        startInput.name = 'rename_start';
+        startInput.value = start;
+        form.appendChild(startInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    });
+    
+    // 分类设置确认
+    document.getElementById('confirm-category').addEventListener('click', function() {
+        const category = document.getElementById('batch_category').value;
+        const checked = document.querySelectorAll('.post-checkbox:checked');
+        if (checked.length === 0) {
+            alert('请至少选择一篇文章');
+            return;
+        }
+        
+        const selectedIds = Array.from(checked).map(cb => cb.value);
+        
+        // 创建表单并提交
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.style.display = 'none';
+        
+        const actionInput = document.createElement('input');
+        actionInput.name = 'action';
+        actionInput.value = 'category';
+        form.appendChild(actionInput);
+        
+        const selectedInput = document.createElement('input');
+        selectedInput.name = 'selected_posts';
+        selectedInput.value = selectedIds.join(',');
+        form.appendChild(selectedInput);
+        
+        const categoryInput = document.createElement('input');
+        categoryInput.name = 'batch_category';
+        categoryInput.value = category;
+        form.appendChild(categoryInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    });
+    
+    // 标签添加确认
+    document.getElementById('confirm-tags').addEventListener('click', function() {
+        const tags = document.getElementById('batch_tags').value;
+        if (!tags) {
+            alert('请输入标签');
+            return;
+        }
+        
+        const checked = document.querySelectorAll('.post-checkbox:checked');
+        if (checked.length === 0) {
+            alert('请至少选择一篇文章');
+            return;
+        }
+        
+        const selectedIds = Array.from(checked).map(cb => cb.value);
+        const replaceTags = document.getElementById('replace_tags').checked;
+        
+        // 创建表单并提交
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.style.display = 'none';
+        
+        const actionInput = document.createElement('input');
+        actionInput.name = 'action';
+        actionInput.value = 'tags';
+        form.appendChild(actionInput);
+        
+        const selectedInput = document.createElement('input');
+        selectedInput.name = 'selected_posts';
+        selectedInput.value = selectedIds.join(',');
+        form.appendChild(selectedInput);
+        
+        const tagsInput = document.createElement('input');
+        tagsInput.name = 'batch_tags';
+        tagsInput.value = tags;
+        form.appendChild(tagsInput);
+        
+        const replaceInput = document.createElement('input');
+        replaceInput.name = 'replace_tags';
+        replaceInput.value = replaceTags ? 'true' : 'false';
+        form.appendChild(replaceInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    });
+});
+</script>
+{% endblock %}

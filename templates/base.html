@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mizuka Blog Manager{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-journal-text me-2"></i>Mizuka Blog Manager
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="bi bi-house me-1"></i>首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'create_post' or request.endpoint == 'edit_post' %}active{% endif %}" href="{{ url_for('create_post') }}">
+                            <i class="bi bi-plus-circle me-1"></i>创建/编辑文章
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'manage_posts' %}active{% endif %}" href="{{ url_for('manage_posts') }}">
+                            <i class="bi bi-list-ul me-1"></i>文章管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'batch_operations' %}active{% endif %}" href="{{ url_for('batch_operations') }}">
+                            <i class="bi bi-lightning me-1"></i>批量操作
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'taxonomy_management' %}active{% endif %}" href="{{ url_for('taxonomy_management') }}">
+                            <i class="bi bi-tags me-1"></i>标签分类管理
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear me-1"></i>设置
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}">路径配置</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="openPostsDirectory()">打开文章目录</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-3 col-lg-2 d-none d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="bi bi-info-circle me-1"></i>博客信息
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-1"><strong>文章目录:</strong></p>
+                            <p class="text-muted small mb-3">{{ posts_dir }}</p>
+                            
+                            <p class="mb-1"><strong>统计信息:</strong></p>
+                            <ul class="list-unstyled small">
+                                <li>总文章数: <span class="badge bg-primary">{{ total_posts }}</span></li>
+                                <li>草稿文章: <span class="badge bg-warning">{{ draft_posts }}</span></li>
+                                <li>置顶文章: <span class="badge bg-info">{{ pinned_posts }}</span></li>
+                                <li>标签数量: <span class="badge bg-success">{{ tags_count }}</span></li>
+                                <li>分类数量: <span class="badge bg-secondary">{{ categories_count }}</span></li>
+                            </ul>
+                            
+                            <a href="{{ url_for('settings') }}" class="btn btn-sm btn-outline-primary w-100">
+                                <i class="bi bi-gear me-1"></i>配置设置
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-lightning me-1"></i>快速操作
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ url_for('create_post') }}" class="btn btn-sm btn-success w-100 mb-2">
+                                <i class="bi bi-plus-circle me-1"></i>新建文章
+                            </a>
+                            <button class="btn btn-sm btn-outline-secondary w-100" onclick="location.reload()">
+                                <i class="bi bi-arrow-clockwise me-1"></i>刷新数据
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主内容区 -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">Mizuka Blog Manager © 2024 - 专为Mizuka博客系统设计的专业内容管理工具</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // 打开文章目录
+        function openPostsDirectory() {
+            fetch('/api/open_directory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({path: '{{ posts_dir }}'})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('目录已打开');
+                } else {
+                    alert('打开目录失败: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('请求失败');
+            });
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

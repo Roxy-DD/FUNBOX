@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}标签和分类管理 - Mizuka Blog Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-tags me-2"></i>标签和分类管理
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('manage_posts') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>返回文章管理
+        </a>
+    </div>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+</div>
+{% endif %}
+
+{% if success %}
+<div class="alert alert-success">
+    <i class="bi bi-check-circle me-2"></i>{{ success }}
+</div>
+{% endif %}
+
+<!-- 统计信息 -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-tags me-2"></i>标签统计</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="display-4">{{ tags|length }}</div>
+                        <div class="text-muted">标签总数</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="display-4">{{ total_tag_usage }}</div>
+                        <div class="text-muted">标签使用次数</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-folder me-2"></i>分类统计</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="display-4">{{ categories|length }}</div>
+                        <div class="text-muted">分类总数</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="display-4">{{ total_category_usage }}</div>
+                        <div class="text-muted">分类使用次数</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 手动添加标签和分类 -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>手动添加</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" class="row g-3">
+            <div class="col-md-5">
+                <label for="new_tag" class="form-label">新标签</label>
+                <input type="text" class="form-control" id="new_tag" name="new_tag" 
+                       placeholder="输入标签名称">
+            </div>
+            <div class="col-md-5">
+                <label for="new_category" class="form-label">新分类</label>
+                <input type="text" class="form-control" id="new_category" name="new_category" 
+                       placeholder="输入分类名称">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" name="action" value="add" class="btn btn-primary w-100">
+                    <i class="bi bi-plus-circle me-2"></i>添加
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 标签列表 -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-tags me-2"></i>
+            标签列表
+            <span class="badge bg-secondary ms-2">{{ tags|length }}</span>
+        </h5>
+        <div>
+            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#syncModal">
+                <i class="bi bi-arrow-clockwise me-1"></i>重新同步
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if tags %}
+        <div class="row">
+            {% for tag, count in tags.items() %}
+            <div class="col-md-4 col-lg-3 mb-3">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">{{ tag }}</h6>
+                            <small class="text-muted">{{ count }} 篇文章</small>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('manage_posts') }}?tag={{ tag }}" 
+                               class="btn btn-outline-primary" title="查看文章">
+                                <i class="bi bi-list-ul"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-danger delete-tag" 
+                                    data-tag="{{ tag }}" title="删除标签">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-tags display-4 text-muted"></i>
+            <h5 class="mt-2 text-muted">暂无标签</h5>
+            <p class="text-muted">创建文章时会自动添加标签，或手动添加标签</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 分类列表 -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="bi bi-folder me-2"></i>
+            分类列表
+            <span class="badge bg-secondary ms-2">{{ categories|length }}</span>
+        </h5>
+        <div>
+            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#syncModal">
+                <i class="bi bi-arrow-clockwise me-1"></i>重新同步
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if categories %}
+        <div class="row">
+            {% for category, count in categories.items() %}
+            <div class="col-md-4 col-lg-3 mb-3">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">{{ category }}</h6>
+                            <small class="text-muted">{{ count }} 篇文章</small>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('manage_posts') }}?category={{ category }}" 
+                               class="btn btn-outline-primary" title="查看文章">
+                                <i class="bi bi-list-ul"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-danger delete-category" 
+                                    data-category="{{ category }}" title="删除分类">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-folder display-4 text-muted"></i>
+            <h5 class="mt-2 text-muted">暂无分类</h5>
+            <p class="text-muted">创建文章时会自动添加分类，或手动添加分类</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 同步数据模态框 -->
+<div class="modal fade" id="syncModal" tabindex="-1" aria-labelledby="syncModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="syncModalLabel">重新同步数据</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>重新同步将扫描所有文章，更新标签和分类统计信息。</p>
+                <p class="text-muted">此操作可能需要一些时间，取决于文章数量。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <form method="post" style="display: inline;">
+                    <button type="submit" name="action" value="sync" class="btn btn-primary">
+                        <i class="bi bi-arrow-clockwise me-2"></i>开始同步
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">确认删除</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除 <span id="delete-type"></span> "<span id="delete-name"></span>" 吗？</p>
+                <p class="text-warning">注意：这只会从标签/分类列表中删除，不会修改使用该标签/分类的文章。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <form id="delete-form" method="post" style="display: inline;">
+                    <input type="hidden" id="delete-action" name="action" value="">
+                    <input type="hidden" id="delete-item" name="item" value="">
+                    <button type="submit" class="btn btn-danger">确认删除</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const deleteType = document.getElementById('delete-type');
+    const deleteName = document.getElementById('delete-name');
+    const deleteAction = document.getElementById('delete-action');
+    const deleteItem = document.getElementById('delete-item');
+    
+    // 删除标签
+    document.querySelectorAll('.delete-tag').forEach(button => {
+        button.addEventListener('click', function() {
+            const tag = this.getAttribute('data-tag');
+            deleteType.textContent = '标签';
+            deleteName.textContent = tag;
+            deleteAction.value = 'delete_tag';
+            deleteItem.value = tag;
+            deleteModal.show();
+        });
+    });
+    
+    // 删除分类
+    document.querySelectorAll('.delete-category').forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            deleteType.textContent = '分类';
+            deleteName.textContent = category;
+            deleteAction.value = 'delete_category';
+            deleteItem.value = category;
+            deleteModal.show();
+        });
+    });
+});
+</script>
+{% endblock %}

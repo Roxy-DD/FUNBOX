@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - Mizuka Blog Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-journal-text me-2"></i>Mizuka 博客管理系统
+    </h1>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            专为Mizuka博客系统设计的文章管理工具 - 支持文件夹方案的文章管理
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-file-earmark-text display-4 text-primary"></i>
+                <h5 class="card-title mt-2">总文章数</h5>
+                <p class="card-text display-6">{{ total_posts }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-file-earmark-text display-4 text-warning"></i>
+                <h5 class="card-title mt-2">草稿文章</h5>
+                <p class="card-text display-6">{{ draft_posts }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-pin-angle display-4 text-info"></i>
+                <h5 class="card-title mt-2">置顶文章</h5>
+                <p class="card-text display-6">{{ pinned_posts }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-tags display-4 text-success"></i>
+                <h5 class="card-title mt-2">标签数量</h5>
+                <p class="card-text display-6">{{ tags_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>快速操作</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('create_post') }}" class="btn btn-success">
+                        <i class="bi bi-plus-circle me-2"></i>创建新文章
+                    </a>
+                    <a href="{{ url_for('manage_posts') }}" class="btn btn-primary">
+                        <i class="bi bi-list-ul me-2"></i>管理现有文章
+                    </a>
+                    <a href="{{ url_for('batch_operations') }}" class="btn btn-warning">
+                        <i class="bi bi-lightning me-2"></i>批量操作
+                    </a>
+                    <a href="{{ url_for('taxonomy_management') }}" class="btn btn-info">
+                        <i class="bi bi-tags me-2"></i>管理标签和分类
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>最近文章</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_posts %}
+                    <ul class="list-group list-group-flush">
+                        {% for post in recent_posts %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ post.title }}</h6>
+                                <small class="text-muted">{{ post.folder }}</small>
+                            </div>
+                            <div>
+                                {% if post.draft %}
+                                <span class="badge bg-warning">草稿</span>
+                                {% else %}
+                                <span class="badge bg-success">已发布</span>
+                                {% endif %}
+                                {% if post.pinned %}
+                                <span class="badge bg-info">置顶</span>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('manage_posts') }}" class="btn btn-sm btn-outline-primary">查看全部</a>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">暂无文章</p>
+                    <div class="text-center">
+                        <a href="{{ url_for('create_post') }}" class="btn btn-sm btn-success">创建第一篇文章</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>使用说明</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>基本功能</h6>
+                        <ul>
+                            <li>创建和编辑Markdown文章，支持YAML frontmatter</li>
+                            <li>管理文章标签和分类</li>
+                            <li>批量操作文章状态和属性</li>
+                            <li>自定义文章发布设置</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>高级功能</h6>
+                        <ul>
+                            <li>自动生成文章文件夹名</li>
+                            <li>文章搜索和筛选</li>
+                            <li>批量重命名和删除</li>
+                            <li>标签和分类自动同步</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
