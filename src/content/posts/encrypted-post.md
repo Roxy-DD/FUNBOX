@@ -1,6 +1,6 @@
 ---
 title: Encrypted Post
-published: '2024-01-15T00:00:00.000Z'
+published: 2024-01-15T00:00:00.000Z
 description: This is an article for testing the page encryption feature
 encrypted: true
 pinned: true
