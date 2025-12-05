@@ -1,0 +1,481 @@
+{
+  "siteConfig": {
+    "title": "FunBox",
+    "subtitle": "One box site",
+    "siteURL": "https://mizuki.mysqil.com/",
+    "siteStartDate": "2025-01-01",
+    "timeZone": 8,
+    "lang": "en",
+    "themeColor": {
+      "hue": 232,
+      "fixed": false
+    },
+    "featurePages": {
+      "anime": true,
+      "diary": false,
+      "friends": false,
+      "projects": true,
+      "skills": true,
+      "timeline": true,
+      "albums": true,
+      "devices": true
+    },
+    "navbarTitle": {
+      "text": "FunBox",
+      "icon": "assets/home/home.png"
+    },
+    "bangumi": {
+      "userId": "your-bangumi-id"
+    },
+    "anime": {
+      "mode": "local"
+    },
+    "postListLayout": {
+      "defaultMode": "list",
+      "allowSwitch": true
+    },
+    "tagStyle": {
+      "useNewStyle": false
+    },
+    "wallpaperMode": {
+      "defaultMode": "banner",
+      "showModeSwitchOnMobile": "desktop"
+    },
+    "banner": {
+      "src": {
+        "desktop": [
+          "/assets/desktop-banner/1.webp",
+          "/assets/desktop-banner/2.webp",
+          "/assets/desktop-banner/3.webp",
+          "/assets/desktop-banner/4.webp",
+          "/assets/desktop-banner/5.webp",
+          "/assets/desktop-banner/6.webp"
+        ],
+        "mobile": [
+          "/assets/mobile-banner/1.webp",
+          "/assets/mobile-banner/2.webp",
+          "/assets/mobile-banner/3.webp",
+          "/assets/mobile-banner/4.webp",
+          "/assets/mobile-banner/5.webp",
+          "/assets/mobile-banner/6.webp"
+        ]
+      },
+      "position": "center",
+      "carousel": {
+        "enable": true,
+        "interval": 1.5
+      },
+      "waves": {
+        "enable": true,
+        "performanceMode": false,
+        "mobileDisable": false
+      },
+      "imageApi": {
+        "enable": false,
+        "url": "http://domain.com/api_v2.php?format=text&count=4"
+      },
+      "homeText": {
+        "enable": true,
+        "title": "美しいミズキ",
+        "subtitle": [
+          "特別なことはないけど、君がいると十分です",
+          "今でもあなたは私の光",
+          "君ってさ、知らないうちに私の毎日になってたよ",
+          "君と話すと、なんか毎日がちょっと楽しくなるんだ",
+          "今日はなんでもない日。でも、ちょっとだけいい日"
+        ],
+        "typewriter": {
+          "enable": true,
+          "speed": 100,
+          "deleteSpeed": 50,
+          "pauseTime": 2000
+        }
+      },
+      "credit": {
+        "enable": false,
+        "text": "Describe",
+        "url": ""
+      },
+      "navbar": {
+        "transparentMode": "semifull"
+      }
+    },
+    "toc": {
+      "enable": true,
+      "mode": "sidebar",
+      "depth": 2,
+      "useJapaneseBadge": true
+    },
+    "generateOgImages": false,
+    "favicon": [],
+    "font": {
+      "asciiFont": {
+        "fontFamily": "ZenMaruGothic-Medium",
+        "fontWeight": "400",
+        "localFonts": [
+          "ZenMaruGothic-Medium.ttf"
+        ],
+        "enableCompress": true
+      },
+      "cjkFont": {
+        "fontFamily": "萝莉体 第二版",
+        "fontWeight": "500",
+        "localFonts": [
+          "萝莉体 第二版.ttf"
+        ],
+        "enableCompress": true
+      }
+    },
+    "showLastModified": true
+  },
+  "fullscreenWallpaperConfig": {
+    "src": {
+      "desktop": [
+        "/assets/desktop-banner/1.webp",
+        "/assets/desktop-banner/2.webp",
+        "/assets/desktop-banner/3.webp",
+        "/assets/desktop-banner/4.webp",
+        "/assets/desktop-banner/5.webp",
+        "/assets/desktop-banner/6.webp"
+      ],
+      "mobile": [
+        "/assets/mobile-banner/1.webp",
+        "/assets/mobile-banner/2.webp",
+        "/assets/mobile-banner/3.webp",
+        "/assets/mobile-banner/4.webp",
+        "/assets/mobile-banner/5.webp",
+        "/assets/mobile-banner/6.webp"
+      ]
+    },
+    "position": "center",
+    "carousel": {
+      "enable": true,
+      "interval": 5
+    },
+    "zIndex": -1,
+    "opacity": 0.8,
+    "blur": 1
+  },
+  "navBarConfig": {
+    "links": [
+      {
+        "name": "主页",
+        "url": "/",
+        "icon": "material-symbols:home-outline"
+      },
+      {
+        "name": "归档",
+        "url": "/archive/",
+        "icon": "material-symbols:archive-outline"
+      },
+      {
+        "name": "链接",
+        "url": "/links/",
+        "icon": "material-symbols:link",
+        "children": [
+          {
+            "name": "GitHub",
+            "url": "https://github.com/matsuzaka-yuki/Mizuki",
+            "external": true,
+            "icon": "fa6-brands:github"
+          },
+          {
+            "name": "Bilibili",
+            "url": "https://space.bilibili.com/701864046",
+            "external": true,
+            "icon": "fa6-brands:bilibili"
+          },
+          {
+            "name": "Gitee",
+            "url": "https://gitee.com/matsuzakayuki/Mizuki",
+            "external": true,
+            "icon": "mdi:git"
+          }
+        ]
+      },
+      {
+        "name": "我的",
+        "url": "/content/",
+        "icon": "material-symbols:person",
+        "children": [
+          {
+            "name": "追番",
+            "url": "/anime/",
+            "icon": "material-symbols:movie"
+          },
+          {
+            "name": "日记",
+            "url": "/diary/",
+            "icon": "material-symbols:book"
+          },
+          {
+            "name": "相册",
+            "url": "/albums/",
+            "icon": "material-symbols:photo-library"
+          },
+          {
+            "name": "设备",
+            "url": "devices/",
+            "icon": "material-symbols:devices",
+            "external": false
+          }
+        ]
+      },
+      {
+        "name": "关于我",
+        "url": "/content/",
+        "icon": "material-symbols:info",
+        "children": [
+          {
+            "name": "About",
+            "url": "/about/",
+            "icon": "material-symbols:person"
+          },
+          {
+            "name": "Friends",
+            "url": "/friends/",
+            "icon": "material-symbols:group"
+          }
+        ]
+      },
+      {
+        "name": "Others",
+        "url": "#",
+        "icon": "material-symbols:more-horiz",
+        "children": [
+          {
+            "name": "Projects",
+            "url": "/projects/",
+            "icon": "material-symbols:work"
+          },
+          {
+            "name": "Skills",
+            "url": "/skills/",
+            "icon": "material-symbols:psychology"
+          },
+          {
+            "name": "Timeline",
+            "url": "/timeline/",
+            "icon": "material-symbols:timeline"
+          }
+        ]
+      }
+    ]
+  },
+  "profileConfig": {
+    "avatar": "assets/images/avatar.webp",
+    "name": "hutaodd",
+    "bio": "The world is big, you have to go and see",
+    "typewriter": {
+      "enable": true,
+      "speed": 80
+    },
+    "links": [
+      {
+        "name": "Bilibli",
+        "icon": "fa6-brands:bilibili",
+        "url": "https://space.bilibili.com/701864046"
+      },
+      {
+        "name": "Gitee",
+        "icon": "mdi:git",
+        "url": "https://gitee.com/matsuzakayuki"
+      },
+      {
+        "name": "GitHub",
+        "icon": "fa6-brands:github",
+        "url": "https://github.com/matsuzaka-yuki"
+      },
+      {
+        "name": "Codeberg",
+        "icon": "simple-icons:codeberg",
+        "url": "https://codeberg.org"
+      },
+      {
+        "name": "Discord",
+        "icon": "fa6-brands:discord",
+        "url": "https://discord.gg/MqW6TcQtVM"
+      }
+    ]
+  },
+  "licenseConfig": {
+    "enable": true,
+    "name": "CC BY-NC-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+  },
+  "expressiveCodeConfig": {
+    "theme": "github-dark",
+    "hideDuringThemeTransition": true
+  },
+  "commentConfig": {
+    "enable": false,
+    "twikoo": {
+      "envId": "https://twikoo.vercel.app",
+      "lang": "en"
+    }
+  },
+  "announcementConfig": {
+    "title": "你好！",
+    "content": "欢迎来到我的博客",
+    "closable": true,
+    "link": {
+      "enable": true,
+      "text": "Learn More",
+      "url": "/about/",
+      "external": false
+    }
+  },
+  "musicPlayerConfig": {
+    "enable": true,
+    "mode": "meting",
+    "meting_api": "https://www.bilibili.uno/api?server=:server&type=:type&id=:id&auth=:auth&r=:r",
+    "id": "14164869977",
+    "server": "netease",
+    "type": "playlist"
+  },
+  "footerConfig": {
+    "enable": false,
+    "customHtml": ""
+  },
+  "sidebarLayoutConfig": {
+    "position": "both",
+    "components": [
+      {
+        "type": "profile",
+        "enable": true,
+        "order": 1,
+        "position": "top",
+        "sidebar": "left",
+        "class": "onload-animation",
+        "animationDelay": 0
+      },
+      {
+        "type": "announcement",
+        "enable": true,
+        "order": 2,
+        "position": "top",
+        "sidebar": "left",
+        "class": "onload-animation",
+        "animationDelay": 50
+      },
+      {
+        "type": "categories",
+        "enable": true,
+        "order": 3,
+        "position": "sticky",
+        "sidebar": "left",
+        "class": "onload-animation",
+        "animationDelay": 150,
+        "responsive": {
+          "collapseThreshold": 5
+        }
+      },
+      {
+        "type": "tags",
+        "enable": true,
+        "order": 5,
+        "position": "top",
+        "sidebar": "left",
+        "class": "onload-animation",
+        "animationDelay": 250,
+        "responsive": {
+          "collapseThreshold": 20
+        }
+      },
+      {
+        "type": "site-stats",
+        "enable": true,
+        "order": 5,
+        "position": "top",
+        "sidebar": "right",
+        "class": "onload-animation",
+        "animationDelay": 200
+      },
+      {
+        "type": "calendar",
+        "enable": true,
+        "order": 6,
+        "position": "top",
+        "sidebar": "right",
+        "class": "onload-animation",
+        "animationDelay": 250
+      }
+    ],
+    "defaultAnimation": {
+      "enable": true,
+      "baseDelay": 0,
+      "increment": 50
+    },
+    "responsive": {
+      "breakpoints": {
+        "mobile": 768,
+        "tablet": 1280,
+        "desktop": 1280
+      },
+      "layout": {
+        "mobile": "sidebar",
+        "tablet": "sidebar",
+        "desktop": "sidebar"
+      }
+    }
+  },
+  "sakuraConfig": {
+    "enable": true,
+    "sakuraNum": 21,
+    "limitTimes": -1,
+    "size": {
+      "min": 0.5,
+      "max": 1.1
+    },
+    "opacity": {
+      "min": 0.3,
+      "max": 0.9
+    },
+    "speed": {
+      "horizontal": {
+        "min": -1.7,
+        "max": -1.2
+      },
+      "vertical": {
+        "min": 1.5,
+        "max": 2.2
+      },
+      "rotation": 0.03,
+      "fadeSpeed": 0.03
+    },
+    "zIndex": 100
+  },
+  "pioConfig": {
+    "enable": true,
+    "models": [
+      "/pio/models/pio/model.json"
+    ],
+    "position": "left",
+    "width": 280,
+    "height": 250,
+    "mode": "draggable",
+    "hiddenOnMobile": true,
+    "dialog": {
+      "welcome": "Welcome to Mizuki Website!",
+      "touch": [
+        "What are you doing?",
+        "Stop touching me!",
+        "HENTAI!",
+        "Don't bully me like that!"
+      ],
+      "home": "Click here to go back to homepage!",
+      "skin": [
+        "Want to see my new outfit?",
+        "The new outfit looks great~"
+      ],
+      "close": "QWQ See you next time~",
+      "link": "https://github.com/matsuzaka-yuki/Mizuki"
+    }
+  },
+  "umamiConfig": {
+    "enabled": false,
+    "apiKey": "api_xxxxxxxx",
+    "baseUrl": "https://api.umami.is",
+    "scripts": "<script defer src=\"XXXX.XXX\" data-website-id=\"ABCD1234\"></script>"
+  }
+}
