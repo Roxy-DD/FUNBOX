@@ -109,7 +109,15 @@ app.post('/api/posts', async (req, res) => {
     await ensureDir(POSTS_DIR);
     
     // Construct file content with frontmatter
-    const fileContent = matter.stringify(content, metadata);
+    let fileContent = matter.stringify(content, metadata);
+    
+    // Remove quotes from date fields (published, updated)
+    // Match: published: 'YYYY-MM-DD' or published: "YYYY-MM-DD"
+    // Replace with: published: YYYY-MM-DD
+    fileContent = fileContent.replace(
+      /(published|updated):\s*['"](\d{4}-\d{2}-\d{2})['"]$/gm,
+      '$1: $2'
+    );
     
     const filePath = path.join(POSTS_DIR, `${slug}.md`);
     await fs.writeFile(filePath, fileContent, 'utf-8');
