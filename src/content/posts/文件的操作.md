@@ -1,0 +1,289 @@
+---
+title: 文件的操作
+description: "go中文件操作的方法"
+tags: [Go]
+category: Go笔记
+draft: false
+published: 2025-07-01
+---
+## **文件**
+
+【1】文件是什么？
+ 文件是保存数据的地方，是数据源的一种，比如大家经常使用的word文档、txt文件、excel文件、jpg文件.都是文件。文件最主要的作用就是保存
+ 数据，它既可以保存一张图片，也可以保持视频，声音..
+ 【2】os包下的File结构体封装了对文件的操作：
+
+> api ：https://studygolang.com/pkgdoc
+
+- type File
+   func Create(name string) (file *File, err error)
+   func Open(name string) (file *File, err error)
+   • func OpenFile(name string, flag int, perm FileMode) (file *File, err error)
+   func NewFile(fd uintptr, name string) *File
+   • func Pipe() (r *File, w *File, err error)
+   ·func (f *File) Name() string
+   ·func (f *File) Stat()(fi Filelnfo, err error)
+   ·func (f *File) Fd() uintptr
+   func (f *File) Chdir() error
+   ·func (f *File) Chmod(mode FileMode) error
+   func (f *File) Chown(uid, gid int) error
+   ·func (f *File) Readdir(n int)(fi Fillelnfo, err eror)
+   ·func (f *File) Readdimames(n int) (names [string, err error)
+   •func (f *File) Truncate(size int64) error
+   ·func (f *File) Read(b byte) (n int, err error)
+   ·func (f *File)ReadAt(b byte, offint64) (nint, err error)
+   · func (f *File) Write(b Jbyte) (n int, err error)
+   ·func (f *File) WriteString(s string) (ret int, err error)
+   func (f *File) WriteAt(b byte, off int64) (n int, err error)
+   func (f *File) Seek(offset int64, whence int) (ret int64, err error)
+   func (f *File) Sync() (err error)
+   func (f *File) Close() error
+
+【3】File结构体---打开文件和关闭文件：
+ （1）打开文件，用于读取：（函数）
+
+#### func [Open](https://github.com/golang/go/blob/master/src/os/file.go?name=release#238)
+
+```
+func Open(name string) (file *File, err error)
+```
+
+Open打开一个文件用于读取。如果操作成功，返回的文件对象的方法可用于读取数据；对应的文件描述符具有O_RDONLY模式。如果出错，错误底层类型是*PathError。
+
+传入一个字符串（文件的路径），返回的是文件的指针，和是否打开成功
+
+(2）关闭文件：(方法)
+
+#### func (*File) [Close](https://github.com/golang/go/blob/master/src/os/file_unix.go?name=release#93)
+
+```
+func (f *File) Close() error
+```
+
+Close关闭文件f，使文件不能用于读写。它返回可能出现的错误。
+
+使文件不能用于读写。它返回可能出现的错误
+
+【4】案例：
+
+```go
+package main
+import (
+	"fmt"
+	"os"
+)
+
+func main()  {
+	file, err := os.Open("D:/workstation/code/gocode/unit11/demo01/test.txt")
+	if err != nil {
+		fmt.Println("文件打开出错：",err)
+	}
+
+	fmt.Printf("文件=%v",file)
+
+	err2 := file.Close()
+	if err2 != nil {
+		fmt.Println("文件关闭出错：",err2)
+	}
+
+}
+```
+
+## **io的引入**
+
+【1】IO流对文件进行操作：
+
+![image](https://s2.loli.net/2025/07/02/Jt8LqmA6pEsu4cT.png)
+
+## **读取文件（一次性）**
+
+【1】读取文件的内容并显示在终端（使用ioutil一次将整个文件读入到内存中），这种方式适用于文件不大的情况。相关方法和函数（ioutil.ReadFile)
+
+> ioutil方法已经在go1.6后弃用，改用os.ReadFile
+
+### func [ReadFile](https://github.com/golang/go/blob/master/src/io/ioutil/ioutil.go?name=release#49)
+
+```
+func ReadFile(filename string) ([]byte, error)
+```
+
+ReadFile 从filename指定的文件中读取数据并返回文件的内容。成功的调用返回的err为nil而非EOF。因为本函数定义为读取整个文件，它不会将读取返回的EOF视为应报告的错误。
+
+> 适用于短文件
+
+【2】案例：
+
+```go
+package main
+import (
+	"fmt"
+	"os"
+)
+
+
+func main()  {
+	//备注：在限免的程序中不需要进行open/close操作，因为文件的打开和关闭操作被封装在ReadFile函数内部了
+	//读取文件：
+	content,err := os.ReadFile("D:/workstation/code/gocode/unit11/demo01/test.txt")
+	//返回内容为：[]byte,err
+	if err != nil {
+		fmt.Println("读取文件失败:",err)
+	}
+	//如果读取成功，返回的内容是一个字节切片
+	// fmt.Println("%v",content)
+	fmt.Printf("%v",string(content))
+}
+```
+
+## **读取文件（带缓冲区）**
+
+【1】读取文件的内容并显示在终端(带缓冲区的方式)，适合读取比较大的文件，使用os.Open,file.Clo
+ 和方法，默认批次大小4096字节
+
+【2】案例：
+
+```go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+)
+
+
+func main()  {
+	//打开文件
+	file,err := os.Open("D:/workstation/code/gocode/unit11/demo01/test.txt")
+	if err != nil {
+		fmt.Println("打开文件失败",err)
+	}
+
+	//当函数关闭时，让file关闭，防止内存泄漏：
+	defer file.Close()
+
+
+	//创建一个流:
+	reader := bufio.NewReader(file)
+	//读取操作：
+	
+	for {
+		str,err := reader.ReadString('\n') //读取一行
+	//返回的内容是一个字符串
+		if err == io.EOF{//如果读取到文件末尾，返回的错误是io.EOF
+			break //如果读取到文件末尾，退出循环
+		}
+		//如果读取成功，返回的内容是一个字符串
+		fmt.Println(str)
+	}
+
+	//结束：
+	fmt.Println("文件读取完毕")
+}
+```
+
+## **写入文件**
+
+【1】打开文件操作：
+
+#### func [OpenFile](https://github.com/golang/go/blob/master/src/os/file_unix.go?name=release#76)
+
+```go
+func OpenFile(name string, flag int, perm FileMode) (file *File, err error)
+```
+
+OpenFile是一个更一般性的文件打开函数，大多数调用者都应用Open或Create代替本函数。它会使用指定的选项（如O_RDONLY等）、指定的模式（如0666等）打开指定名称的文件。如果操作成功，返回的文件对象可用于I/O。如果出错，错误底层类型是*PathError。
+
+三个参数含义：
+ （1）要打开的文件的路径
+ （2）文件打开模式（可以利用"符号进行组合）
+
+### Constants
+
+```go
+const (
+    O_RDONLY int = syscall.O_RDONLY // 只读模式打开文件
+    O_WRONLY int = syscall.O_WRONLY // 只写模式打开文件
+    O_RDWR   int = syscall.O_RDWR   // 读写模式打开文件
+    O_APPEND int = syscall.O_APPEND // 写操作时将数据附加到文件尾部
+    O_CREATE int = syscall.O_CREAT  // 如果不存在将创建一个新文件
+    O_EXCL   int = syscall.O_EXCL   // 和O_CREATE配合使用，文件必须不存在
+    O_SYNC   int = syscall.O_SYNC   // 打开文件用于同步I/O
+    O_TRUNC  int = syscall.O_TRUNC  // 如果可能，打开时清空文件
+)
+```
+
+
+
+（3）权限控制（linux/unix系统下才生效，windows下设置无效）
+
+【2】案例：
+
+```go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+func main() {
+	//写入文件操作：
+	//打开文件：
+	file, err := os.OpenFile("D:/Demo.txt",os.O_RDWR | os.O_APPEND | os.O_CREATE,0666)
+	if err != nil {
+		//文件打开失败
+		fmt.Printf("文件打开失败: %v\n", err)
+		return
+	}
+
+	//及时将文件关闭：
+	defer file.Close()
+
+	//写入文件操作：--》io流————》缓冲输出流(带缓冲区的输出流)
+	writer := bufio.NewWriter(file)
+
+	writer.WriteString("Hello, Go!\n")
+
+	//流缓冲区，刷新数据-->真正写入文件
+	//如果不刷新，数据可能不会立即写入文件
+	writer.Flush()
+	s := os.FileMode(0666).String() // 设置文件权限
+	fmt.Println(s)
+}
+```
+
+## **案例：文件复制**
+
+```go
+package main
+
+import (
+	"os"
+	"fmt"
+)
+
+
+func main(){
+	//定义源文件
+	file1Path := "D:/demo.txt"
+
+	//定义目标文件
+	file2Path := "D:/demo_copy.txt"
+
+	//对文件进行读取：
+	content,err := os.ReadFile(file1Path)
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+		return
+	}
+
+	//写出文件：
+	err = os.WriteFile(file2Path, content, 0666)
+
+	if err != nil {
+		fmt.Println("Error writing file:", err)
+	}
+}
+```

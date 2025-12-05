@@ -37,23 +37,6 @@ export default {
         dragDrop: "拖拽图片到此处或点击上传",
         copySuccess: "链接已复制",
         deleteConfirm: "确定要删除这张图片吗？",
-        empty: "暂无图片"
-    },
-    git: {
-        title: "同步",
-        status: "Git 状态",
-        noChanges: "无需同步",
-        hasChanges: "有 {{count}} 个更改待推送",
-        syncing: "同步中...",
-        syncNow: "立即同步",
-        success: "同步成功",
-        error: "同步失败",
-        branch: "分支: {{branch}}"
-    },
-    activity: {
-        title: "最近动态",
-        edited: "编辑了 {{title}}",
-        created: "创建了 {{title}}"
     },
     tabs: {
       general: "常规",

@@ -38,23 +38,6 @@ export default {
         dragDrop: "Drag & Drop images here or click to upload",
         copySuccess: "Link Copied",
         deleteConfirm: "Are you sure you want to delete this image?",
-        empty: "No images found"
-    },
-    git: {
-        title: "Sync",
-        status: "Git Status",
-        noChanges: "Up to date",
-        hasChanges: "{{count}} pending changes",
-        syncing: "Syncing...",
-        syncNow: "Sync Now",
-        success: "Sync Successful",
-        error: "Sync Failed",
-        branch: "Branch: {{branch}}"
-    },
-    activity: {
-        title: "Recent Activity",
-        edited: "Edited {{title}}",
-        created: "Created {{title}}"
     },
     tabs: {
       general: "General",
