@@ -109,7 +109,20 @@ app.post('/api/posts', async (req, res) => {
     await ensureDir(POSTS_DIR);
     
     // Construct file content with frontmatter
-    const fileContent = matter.stringify(content, metadata);
+    // Configure gray-matter to not quote date strings
+    const fileContent = matter.stringify(content, metadata, {
+      engines: {
+        yaml: {
+          stringify: (obj) => {
+            const YAML = require('yaml');
+            return YAML.stringify(obj, {
+              defaultStringType: 'PLAIN',
+              defaultKeyType: 'PLAIN'
+            });
+          }
+        }
+      }
+    });
     
     const filePath = path.join(POSTS_DIR, `${slug}.md`);
     await fs.writeFile(filePath, fileContent, 'utf-8');
