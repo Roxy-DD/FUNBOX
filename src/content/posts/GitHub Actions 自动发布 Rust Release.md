@@ -5,12 +5,10 @@ tags:
   - GitHub
   - 工具
   - Rust
-category:
-  - 工具
+category: 工具
 published: 2025-11-16
 draft: false
-author:
-  - 2e41e462ac41d481ebfbbb2465242a976de4596b89b94e2c672b66b26454d0b3
+author: 2e41e462ac41d481ebfbbb2465242a976de4596b89b94e2c672b66b26454d0b3
 ---
 
 # GitHub Actions 自动发布 Rust Release：从概念到实践
