@@ -1,6 +1,6 @@
 ---
 title: 使用Rust构建现代化的PowerShell代理管理工具
-description: ''
+description: '使用Rust构建现代化的PowerShell代理管理工具'
 published: 2025-12-05
 draft: false
 tags:
