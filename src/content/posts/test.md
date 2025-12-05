@@ -1,7 +1,7 @@
 ---
 title: 测试文章
 description: ''
-published: '2025-12-06'
+published: 2025-12-06
 draft: true
 tags:
   - 测试
