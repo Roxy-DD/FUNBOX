@@ -231,6 +231,29 @@ app.post('/api/git/sync', async (req, res) => {
   }
 });
 
+// API: Push Posts (Simplified - Fixed commit message)
+app.post('/api/git/push-posts', async (req, res) => {
+  try {
+    // 1. Add all changes
+    await execPromise('git add .', { cwd: PROJECT_ROOT });
+    
+    // 2. Commit with fixed message
+    await execPromise('git commit -m "add posts"', { cwd: PROJECT_ROOT });
+    
+    // 3. Push
+    await execPromise('git push origin master', { cwd: PROJECT_ROOT });
+    
+    res.json({ success: true, message: 'Pushed successfully' });
+  } catch (error) {
+    console.error('Git push error:', error);
+    // If nothing to commit, it might fail
+    if (error.stdout && error.stdout.includes('nothing to commit')) {
+        return res.json({ success: true, message: 'Nothing to commit' });
+    }
+    res.status(500).json({ error: error.message || 'Failed to push' });
+  }
+});
+
 // Serve assets statically for preview (optional, usually handled by Vite/Astro)
 // But for admin dashboard to preview images from public/assets:
 app.use('/assets', express.static(ASSETS_DIR));
