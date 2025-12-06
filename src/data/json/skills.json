@@ -5,7 +5,7 @@
     "description": "Modern JavaScript development, including ES6+ syntax, asynchronous programming, and modular development.",
     "icon": "logos:javascript",
     "category": "frontend",
-    "level": "advanced",
+    "level": "expert",
     "experience": {
       "years": 3,
       "months": 6

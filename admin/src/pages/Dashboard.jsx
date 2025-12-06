@@ -60,8 +60,9 @@ export default function Dashboard() {
                 </div>
                 <div className="flex gap-3">
                     <a 
-                        href="/" 
+                        href="http://localhost:4321" 
                         target="_blank" 
+                        rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm font-medium"
                     >
                         <ExternalLink size={16} />

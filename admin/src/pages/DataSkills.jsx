@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { Search, Filter, Award, BookOpen, Database, Wrench, Code } from 'lucide-react';
+import { Search, Filter, Award, BookOpen, Database, Wrench, Code, Plus, Edit, Trash2, RefreshCw } from 'lucide-react';
+import EditModal from '../components/EditModal';
+import SkillForm from '../components/SkillForm';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 export default function DataSkills() {
   const { lang } = useLanguage();
@@ -10,6 +13,14 @@ export default function DataSkills() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [levelFilter, setLevelFilter] = useState('all');
+  
+  // Modal states
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editingSkill, setEditingSkill] = useState(null);
+  const [deletingSkill, setDeletingSkill] = useState(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   // Fetch skills data
   useEffect(() => {
@@ -58,6 +69,91 @@ export default function DataSkills() {
 
     setFilteredSkills(filtered);
   }, [searchTerm, categoryFilter, levelFilter, skills]);
+
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleCreate = () => {
+    setEditingSkill(null);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEdit = (skill) => {
+    setEditingSkill(skill);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSave = async (skillData) => {
+    try {
+      const isUpdate = !!editingSkill;
+      const url = isUpdate ? `/api/data/skills/${editingSkill.id}` : '/api/data/skills';
+      const method = isUpdate ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(skillData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        await fetchSkills();
+        setIsEditModalOpen(false);
+        showNotification(isUpdate ? (lang === 'zh' ? '技能已更新' : 'Skill updated') : (lang === 'zh' ? '技能已创建' : 'Skill created'));
+      } else {
+        alert(data.error || 'Operation failed');
+      }
+    } catch (error) {
+      console.error('Error saving skill:', error);
+      alert('Failed to save skill');
+    }
+  };
+
+  const handleDelete = (skill) => {
+    setDeletingSkill(skill);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(`/api/data/skills/${deletingSkill.id}`, { method: 'DELETE' });
+      const data = await response.json();
+
+      if (data.success) {
+        await fetchSkills();
+        setIsDeleteDialogOpen(false);
+        setDeletingSkill(null);
+        showNotification(lang === 'zh' ? '技能已删除' : 'Skill deleted');
+      } else {
+        alert(data.error || 'Delete failed');
+      }
+    } catch (error) {
+      console.error('Error deleting skill:', error);
+      alert('Failed to delete skill');
+    }
+  };
+
+  const handleSync = async () => {
+    try {
+      setIsSyncing(true);
+      const response = await fetch('/api/data/skills/sync', { method: 'POST' });
+      const data = await response.json();
+
+      if (data.success) {
+        showNotification(lang === 'zh' ? 'TS文件已更新' : 'TypeScript file synced');
+      } else {
+        alert(data.error || 'Sync failed');
+      }
+    } catch (error) {
+      console.error('Error syncing:', error);
+      alert('Failed to sync');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const getLevelBadge = (level) => {
     const styles = {
@@ -120,14 +216,34 @@ export default function DataSkills() {
 
   return (
     <div className="p-6">
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
+          notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white`}>
+          {notification.message}
+        </div>
+      )}
+
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          {lang === 'zh' ? '技能管理' : 'Skills Management'}
-        </h1>
-        <p className="text-gray-600 text-sm">
-          {lang === 'zh' ? '查看和管理所有技能数据' : 'View and manage all skills data'}
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            {lang === 'zh' ? '技能管理' : 'Skills Management'}
+          </h1>
+          <p className="text-gray-600 text-sm">
+            {lang === 'zh' ? '查看和管理所有技能数据' : 'View and manage all skills data'}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={handleCreate} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <Plus size={18} />
+            {lang === 'zh' ? '添加技能' : 'Add Skill'}
+          </button>
+          <button onClick={handleSync} disabled={isSyncing} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+            <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} />
+            {lang === 'zh' ? '同步到TS' : 'Sync to TS'}
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -218,9 +334,17 @@ export default function DataSkills() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {categorySkills.map(skill => (
-                <div key={skill.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-5">
+                <div key={skill.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-5 relative group">
+                  <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => handleEdit(skill)} className="p-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100" title={lang === 'zh' ? '编辑' : 'Edit'}>
+                      <Edit size={16} />
+                    </button>
+                    <button onClick={() => handleDelete(skill)} className="p-2 bg-red-50 text-red-600 rounded hover:bg-red-100" title={lang === 'zh' ? '删除' : 'Delete'}>
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                   {/* Header */}
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-start justify-between mb-3 pr-16">
                     <div className="flex-1">
                       <h3 className="text-base font-semibold text-gray-800">{skill.name}</h3>
                     </div>
@@ -263,6 +387,25 @@ export default function DataSkills() {
           </p>
         </div>
       )}
+
+      <EditModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title={editingSkill ? (lang === 'zh' ? '编辑技能' : 'Edit Skill') : (lang === 'zh' ? '添加技能' : 'Add Skill')}
+        size="large"
+      >
+        <SkillForm skill={editingSkill} onSave={handleSave} onCancel={() => setIsEditModalOpen(false)} />
+      </EditModal>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        onCancel={() => setIsDeleteDialogOpen(false)}
+        title={lang === 'zh' ? '确认删除' : 'Confirm Delete'}
+        message={`${lang === 'zh' ? '确定要删除技能' : 'Are you sure you want to delete'} "${deletingSkill?.name}"?`}
+        confirmText={lang === 'zh' ? '删除' : 'Delete'}
+        danger={true}
+      />
     </div>
   );
 }

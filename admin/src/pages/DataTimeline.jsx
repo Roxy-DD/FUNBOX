@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { Search, Calendar, MapPin, Building, Award, ExternalLink, Trophy } from 'lucide-react';
+import { Search, Calendar, MapPin, Building, Award, ExternalLink, Trophy, Plus, Edit, Trash2, RefreshCw } from 'lucide-react';
+import EditModal from '../components/EditModal';
+import TimelineForm from '../components/TimelineForm';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 export default function DataTimeline() {
   const { lang } = useLanguage();
@@ -10,6 +13,13 @@ export default function DataTimeline() {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [sortOrder, setSortOrder] = useState('desc'); // desc = newest first
+  
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  const [deletingItem, setDeletingItem] = useState(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   // Fetch timeline data
   useEffect(() => {
@@ -61,6 +71,55 @@ export default function DataTimeline() {
 
     setFilteredTimeline(filtered);
   }, [searchTerm, typeFilter, sortOrder, timeline]);
+
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleCreate = () => { setEditingItem(null); setIsEditModalOpen(true); };
+  const handleEdit = (item) => { setEditingItem(item); setIsEditModalOpen(true); };
+
+  const handleSave = async (itemData) => {
+    try {
+      const isUpdate = !!editingItem;
+      const url = isUpdate ? `/api/data/timeline/${editingItem.id}` : '/api/data/timeline';
+      const method = isUpdate ? 'PUT' : 'POST';
+      const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(itemData) });
+      const data = await response.json();
+      if (data.success) {
+        await fetchTimeline();
+        setIsEditModalOpen(false);
+        showNotification(isUpdate ? (lang === 'zh' ? '事件已更新' : 'Event updated') : (lang === 'zh' ? '事件已创建' : 'Event created'));
+      } else { alert(data.error || 'Operation failed'); }
+    } catch (error) { console.error('Error saving:', error); alert('Failed to save'); }
+  };
+
+  const handleDelete = (item) => { setDeletingItem(item); setIsDeleteDialogOpen(true); };
+
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(`/api/data/timeline/${deletingItem.id}`, { method: 'DELETE' });
+      const data = await response.json();
+      if (data.success) {
+        await fetchTimeline();
+        setIsDeleteDialogOpen(false);
+        setDeletingItem(null);
+        showNotification(lang === 'zh' ? '事件已删除' : 'Event deleted');
+      } else { alert(data.error || 'Delete failed'); }
+    } catch (error) { console.error('Error deleting:', error); alert('Failed to delete'); }
+  };
+
+  const handleSync = async () => {
+    try {
+      setIsSyncing(true);
+      const response = await fetch('/api/data/timeline/sync', { method: 'POST' });
+      const data = await response.json();
+      if (data.success) { showNotification(lang === 'zh' ? 'TS文件已更新' : 'TypeScript file synced'); }
+      else { alert(data.error || 'Sync failed'); }
+    } catch (error) { console.error('Error syncing:', error); alert('Failed to sync'); }
+    finally { setIsSyncing(false); }
+  };
 
   const getTypeBadge = (type) => {
     const styles = {
@@ -127,14 +186,27 @@ export default function DataTimeline() {
 
   return (
     <div className="p-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          {lang === 'zh' ? '时间线管理' : 'Timeline Management'}
-        </h1>
-        <p className="text-gray-600 text-sm">
-          {lang === 'zh' ? '查看和管理个人成长历程' : 'View and manage personal growth journey'}
-        </p>
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+          {notification.message}
+        </div>
+      )}
+
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">{lang === 'zh' ? '时间线管理' : 'Timeline Management'}</h1>
+          <p className="text-gray-600 text-sm">{lang === 'zh' ? '查看和管理个人成长历程' : 'View and manage personal growth journey'}</p>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={handleCreate} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <Plus size={18} />
+            {lang === 'zh' ? '添加事件' : 'Add Event'}
+          </button>
+          <button onClick={handleSync} disabled={isSyncing} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+            <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} />
+            {lang === 'zh' ? '同步到TS' : 'Sync to TS'}
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -226,9 +298,17 @@ export default function DataTimeline() {
               </div>
 
               {/* Content */}
-              <div className="flex-1 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 mb-4">
+              <div className="flex-1 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6 mb-4 relative group">
+                <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <button onClick={() => handleEdit(item)} className="p-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100" title={lang === 'zh' ? '编辑' : 'Edit'}>
+                    <Edit size={16} />
+                  </button>
+                  <button onClick={() => handleDelete(item)} className="p-2 bg-red-50 text-red-600 rounded hover:bg-red-100" title={lang === 'zh' ? '删除' : 'Delete'}>
+                    <Trash2 size={16} />
+                  </button>
+                </div>
                 {/* Header */}
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-3 pr-16">
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-800 mb-1">{item.title}</h3>
                     {item.organization && (
@@ -313,12 +393,27 @@ export default function DataTimeline() {
 
       {/* Empty State */}
       {filteredTimeline.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">
-            {lang === 'zh' ? '没有找到匹配的事件' : 'No events found'}
-          </p>
-        </div>
+        <div className="text-center py-12"><p className="text-gray-500">{lang === 'zh' ? '没有找到匹配的事件' : 'No events found'}</p></div>
       )}
+
+      <EditModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title={editingItem ? (lang === 'zh' ? '编辑事件' : 'Edit Event') : (lang === 'zh' ? '添加事件' : 'Add Event')}
+        size="xlarge"
+      >
+        <TimelineForm item={editingItem} onSave={handleSave} onCancel={() => setIsEditModalOpen(false)} />
+      </EditModal>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        onCancel={() => setIsDeleteDialogOpen(false)}
+        title={lang === 'zh' ? '确认删除' : 'Confirm Delete'}
+        message={`${lang === 'zh' ? '确定要删除事件' : 'Are you sure you want to delete'} "${deletingItem?.title}"?`}
+        confirmText={lang === 'zh' ? '删除' : 'Delete'}
+        danger={true}
+      />
     </div>
   );
 }
