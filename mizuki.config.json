@@ -31,8 +31,8 @@
       "mode": "bangumi"
     },
     "postListLayout": {
-      "defaultMode": "list",
-      "allowSwitch": false
+      "defaultMode": "grid",
+      "allowSwitch": true
     },
     "tagStyle": {
       "useNewStyle": false
