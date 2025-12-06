@@ -17,6 +17,13 @@ import { exec } from 'child_process';
 import util from 'util';
 const execPromise = util.promisify(exec);
 
+// Import data parser for Projects/Skills/Timeline
+import { getProjectsData, getSkillsData, getTimelineData } from './utils/dataParser.js';
+
+// Import CRUD utilities
+import { readData, createItem, updateItem, deleteItem } from './utils/dataCrud.js';
+import { generateTsFromJson } from './utils/generateTs.js';
+
 // Configure Multer for file upload
 import multer from 'multer';
 const storage = multer.diskStorage({
@@ -257,6 +264,107 @@ app.post('/api/git/push-posts', async (req, res) => {
 // Serve assets statically for preview (optional, usually handled by Vite/Astro)
 // But for admin dashboard to preview images from public/assets:
 app.use('/assets', express.static(ASSETS_DIR));
+
+// ==================== Data Management APIs ====================
+// Read-only APIs for Projects, Skills, and Timeline data
+
+// API: Get Projects Data
+app.get('/api/data/projects', async (req, res) => {
+  try {
+    const projects = await readData('projects');
+    res.json({ success: true, data: projects });
+  } catch (error) {
+    console.error('Error reading projects data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API: Get Skills Data
+app.get('/api/data/skills', async (req, res) => {
+  try {
+    const skills = await readData('skills');
+    res.json({ success: true, data: skills });
+  } catch (error) {
+    console.error('Error reading skills data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API: Get Timeline Data
+app.get('/api/data/timeline', async (req, res) => {
+  try {
+    const timeline = await readData('timeline');
+    res.json({ success: true, data: timeline });
+  } catch (error) {
+    console.error('Error reading timeline data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==================== CRUD Operations APIs ====================
+// Full Create/Update/Delete operations for data management
+
+// CREATE: Add new item
+app.post('/api/data/:type', async (req, res) => {
+  try {
+    const { type } = req.params;
+    const item = req.body;
+    
+    if (!item.id) {
+      return res.status(400).json({ error: 'Missing required field: id' });
+    }
+    
+    const created = await createItem(type, item);
+    res.json({ success: true, data: created, message: 'Item created successfully' });
+  } catch (error) {
+    console.error(`Error creating ${type} item:`, error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// UPDATE: Modify existing item
+app.put('/api/data/:type/:id', async (req, res) => {
+  try {
+    const { type, id } = req.params;
+    const updates = req.body;
+    
+    const updated = await updateItem(type, id, updates);
+    res.json({ success: true, data: updated, message: 'Item updated successfully' });
+  } catch (error) {
+    console.error(`Error updating ${type} item:`, error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// DELETE: Remove item
+app.delete('/api/data/:type/:id', async (req, res) => {
+  try {
+    const { type, id } = req.params;
+    
+    const result = await deleteItem(type, id);
+    res.json({ success: true, data: result, message: 'Item deleted successfully' });
+  } catch (error) {
+    console.error(`Error deleting ${type} item:`, error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// SYNC: Generate TypeScript file from JSON
+app.post('/api/data/:type/sync', async (req, res) => {
+  try {
+    const { type } = req.params;
+    
+    const result = await generateTsFromJson(type);
+    res.json({ 
+      success: true, 
+      data: result, 
+      message: `TypeScript file updated (${result.itemCount} items)` 
+    });
+  } catch (error) {
+    console.error(`Error syncing ${type} to TypeScript:`, error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Admin server running at http://localhost:${PORT}`);

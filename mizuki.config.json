@@ -18,7 +18,7 @@
       "skills": true,
       "timeline": true,
       "albums": true,
-      "devices": true
+      "devices": false
     },
     "navbarTitle": {
       "text": "FunBox",
@@ -196,18 +196,6 @@
             "name": "追番",
             "url": "/anime/",
             "icon": "material-symbols:movie"
-          }
-        ]
-      },
-      {
-        "name": "关于我",
-        "url": "/content/",
-        "icon": "material-symbols:info",
-        "children": [
-          {
-            "name": "About",
-            "url": "/about/",
-            "icon": "material-symbols:person"
           }
         ]
       },

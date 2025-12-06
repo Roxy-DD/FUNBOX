@@ -5,6 +5,9 @@ import Dashboard from './pages/Dashboard';
 import Media from './pages/Media';
 import Settings from './pages/Settings';
 import Posts from './pages/Posts';
+import DataProjects from './pages/DataProjects';
+import DataSkills from './pages/DataSkills';
+import DataTimeline from './pages/DataTimeline';
 import { LanguageProvider } from './context/LanguageContext';
 
 function AdminLayout() {
@@ -23,6 +26,9 @@ function AdminLayout() {
                         {activeTab === 'media' && <Media />}
                         {activeTab === 'settings' && <Settings />}
                         {activeTab === 'posts' && <Posts />}
+                        {activeTab === 'data-projects' && <DataProjects />}
+                        {activeTab === 'data-skills' && <DataSkills />}
+                        {activeTab === 'data-timeline' && <DataTimeline />}
                     </div>
                 </main>
             </div>
