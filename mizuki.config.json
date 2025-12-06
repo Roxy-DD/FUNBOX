@@ -31,11 +31,11 @@
       "mode": "bangumi"
     },
     "postListLayout": {
-      "defaultMode": "grid",
+      "defaultMode": "list",
       "allowSwitch": true
     },
     "tagStyle": {
-      "useNewStyle": false
+      "useNewStyle": true
     },
     "wallpaperMode": {
       "defaultMode": "banner",
