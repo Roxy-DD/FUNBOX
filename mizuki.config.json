@@ -32,7 +32,7 @@
     },
     "postListLayout": {
       "defaultMode": "list",
-      "allowSwitch": true
+      "allowSwitch": false
     },
     "tagStyle": {
       "useNewStyle": false
@@ -76,13 +76,13 @@
       },
       "homeText": {
         "enable": true,
-        "title": "美しいミズキ",
+        "title": "assert(0)",
         "subtitle": [
-          "特別なことはないけど、君がいると十分です",
-          "今でもあなたは私の光",
-          "君ってさ、知らないうちに私の毎日になってたよ",
-          "君と話すと、なんか毎日がちょっと楽しくなるんだ",
-          "今日はなんでもない日。でも、ちょっとだけいい日"
+          "TODO: Fix before ship 🚢",
+          "Here be dragons 🐉",
+          "while(alive) { code(); }",
+          "sudo !!",
+          "unreachable!()"
         ],
         "typewriter": {
           "enable": true,
@@ -239,7 +239,7 @@
         ]
       },
       {
-        "name": "Others",
+        "name": "其他",
         "url": "#",
         "icon": "material-symbols:more-horiz",
         "children": [
