@@ -175,21 +175,15 @@
         "children": [
           {
             "name": "GitHub",
-            "url": "https://github.com/matsuzaka-yuki/Mizuki",
+            "url": "https://github.com/Roxy-DD",
             "external": true,
             "icon": "fa6-brands:github"
           },
           {
             "name": "Bilibili",
-            "url": "https://space.bilibili.com/701864046",
+            "url": "https://space.bilibili.com/88502018",
             "external": true,
             "icon": "fa6-brands:bilibili"
-          },
-          {
-            "name": "Gitee",
-            "url": "https://gitee.com/matsuzakayuki/Mizuki",
-            "external": true,
-            "icon": "mdi:git"
           }
         ]
       },
@@ -202,22 +196,6 @@
             "name": "追番",
             "url": "/anime/",
             "icon": "material-symbols:movie"
-          },
-          {
-            "name": "日记",
-            "url": "/diary/",
-            "icon": "material-symbols:book"
-          },
-          {
-            "name": "相册",
-            "url": "/albums/",
-            "icon": "material-symbols:photo-library"
-          },
-          {
-            "name": "设备",
-            "url": "devices/",
-            "icon": "material-symbols:devices",
-            "external": false
           }
         ]
       },
@@ -230,11 +208,6 @@
             "name": "About",
             "url": "/about/",
             "icon": "material-symbols:person"
-          },
-          {
-            "name": "Friends",
-            "url": "/friends/",
-            "icon": "material-symbols:group"
           }
         ]
       },
@@ -244,17 +217,17 @@
         "icon": "material-symbols:more-horiz",
         "children": [
           {
-            "name": "Projects",
+            "name": "项目",
             "url": "/projects/",
             "icon": "material-symbols:work"
           },
           {
-            "name": "Skills",
+            "name": "技能",
             "url": "/skills/",
             "icon": "material-symbols:psychology"
           },
           {
-            "name": "Timeline",
+            "name": "时间线",
             "url": "/timeline/",
             "icon": "material-symbols:timeline"
           }
@@ -264,7 +237,7 @@
   },
   "profileConfig": {
     "avatar": "assets/images/avatar.webp",
-    "name": "hutaodd",
+    "name": "Roxy-DD",
     "bio": "The limits of my language mean the limits of my world.",
     "typewriter": {
       "enable": true,
@@ -274,27 +247,12 @@
       {
         "name": "Bilibli",
         "icon": "fa6-brands:bilibili",
-        "url": "https://space.bilibili.com/701864046"
-      },
-      {
-        "name": "Gitee",
-        "icon": "mdi:git",
-        "url": "https://gitee.com/matsuzakayuki"
+        "url": "https://space.bilibili.com/88502018"
       },
       {
         "name": "GitHub",
         "icon": "fa6-brands:github",
-        "url": "https://github.com/matsuzaka-yuki"
-      },
-      {
-        "name": "Codeberg",
-        "icon": "simple-icons:codeberg",
-        "url": "https://codeberg.org"
-      },
-      {
-        "name": "Discord",
-        "icon": "fa6-brands:discord",
-        "url": "https://discord.gg/MqW6TcQtVM"
+        "url": "https://github.com/Roxy-DD"
       }
     ]
   },
