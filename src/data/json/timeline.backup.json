@@ -82,22 +82,5 @@
     "icon": "",
     "color": "#000000",
     "featured": false
-  },
-  {
-    "id": "bilibili2bangumi",
-    "title": "Bilibili2Bangumi",
-    "description": "一个将B站追番列表同步到Bangumi的工具",
-    "type": "project",
-    "startDate": "2024-08-01",
-    "endDate": "",
-    "location": "",
-    "organization": "",
-    "position": "",
-    "skills": [],
-    "achievements": [],
-    "links": [],
-    "icon": "",
-    "color": "#000000",
-    "featured": false
   }
 ]

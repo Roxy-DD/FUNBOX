@@ -224,7 +224,7 @@
     "description": "A general-purpose programming language suitable for web development, data analysis, machine learning, and more.",
     "icon": "logos:python",
     "category": "backend",
-    "level": "intermediate",
+    "level": "advanced",
     "experience": {
       "years": 1,
       "months": 10
@@ -271,7 +271,7 @@
     "description": "An efficient programming language developed by Google, suitable for cloud-native and microservices development.",
     "icon": "logos:go",
     "category": "backend",
-    "level": "beginner",
+    "level": "advanced",
     "experience": {
       "years": 0,
       "months": 8
@@ -287,7 +287,7 @@
     "description": "A systems programming language focusing on safety, speed, and concurrency, with no garbage collector.",
     "icon": "logos:rust",
     "category": "backend",
-    "level": "beginner",
+    "level": "intermediate",
     "experience": {
       "years": 0,
       "months": 6

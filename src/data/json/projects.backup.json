@@ -1,136 +1,190 @@
 [
   {
-    "id": "mizuki-blog",
-    "title": "Mizuki Blog",
-    "description": "Modern blog theme developed based on the Astro framework, supporting multilingual, dark mode, and responsive",
+    "id": "funbox",
+    "title": "FUNBOX",
+    "description": "funbox",
+    "image": "",
+    "category": "web",
+    "techStack": [
+      "Astro",
+      "astro-theme"
+    ],
+    "status": "in-progress",
+    "liveDemo": "https://mikufun.dpdns.org/",
+    "sourceCode": "https://github.com/Roxy-DD/FUNBOX",
+    "visitUrl": "",
+    "startDate": "2024-05-21",
+    "endDate": "2025-12-06",
+    "featured": false,
+    "tags": [
+      "astro",
+      "static-site",
+      "blog-template"
+    ]
+  },
+  {
+    "id": "mizuki",
+    "title": "Mizuki",
+    "description": "下一代Material Design 3 博客主题(Astro驱动) (Forked from matsuzaka-yuki/Mizuki)",
     "image": "",
     "category": "web",
     "techStack": [
       "Astro",
       "TypeScript",
-      "Tailwind CSS",
-      "Svelte"
+      "Svelte",
+      "Tailwind CSS"
     ],
     "status": "completed",
-    "liveDemo": "https://blog.example.com",
-    "sourceCode": "https://github.com/example/mizuki",
-    "visitUrl": "https://blog.example.com",
-    "startDate": "2024-01-01",
-    "endDate": "2024-06-01",
-    "featured": true,
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/Mizuki",
+    "visitUrl": "",
+    "startDate": "2025-11-24",
+    "endDate": "2025-12-06",
+    "featured": false,
     "tags": [
-      "Blog",
-      "Theme",
-      "Open Source"
+      "astro",
+      "theme",
+      "blog"
     ]
   },
   {
-    "id": "portfolio-website",
-    "title": "Personal Portfolio",
-    "description": "Personal portfolio website showcasing project experience and technical skills.",
+    "id": "proxy-cli",
+    "title": "Proxy CLI",
+    "description": "一个简单的命令行代理管理工具，用于快速切换本地 HTTP/HTTPS 代理。",
+    "image": "",
+    "category": "desktop",
+    "techStack": [
+      "Rust",
+      "CLI"
+    ],
+    "status": "completed",
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/proxy-cli",
+    "visitUrl": "",
+    "startDate": "2025-12-03",
+    "endDate": "2025-12-03",
+    "featured": true,
+    "tags": [
+      "rust",
+      "cli",
+      "proxy",
+      "tool"
+    ]
+  },
+  {
+    "id": "mizuki-blog-manager",
+    "title": "Mizuki Blog Manager",
+    "description": "Mizuka Blog Manager 是一个基于 Flask 的轻量级博客管理系统，专为 Mizuka 博客系统设计。它提供了直观的 Web 界面，让用户可以轻松创建、编辑和管理博客文章。",
     "image": "",
     "category": "web",
     "techStack": [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Framer Motion"
+      "Python",
+      "Flask",
+      "Web"
     ],
     "status": "completed",
-    "liveDemo": "https://portfolio.example.com",
-    "sourceCode": "https://github.com/example/portfolio",
-    "visitUrl": "https://portfolio.example.com",
-    "startDate": "2023-09-01",
-    "endDate": "2023-12-01",
-    "featured": true,
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/Mizuki-Blog-Manager",
+    "visitUrl": "",
+    "startDate": "2025-12-03",
+    "endDate": "2025-12-03",
+    "featured": false,
     "tags": [
-      "Portfolio",
-      "React",
-      "Animation"
+      "python",
+      "flask",
+      "blog-management"
     ]
   },
   {
-    "id": "task-manager-app",
-    "title": "Task Manager App",
-    "description": "Cross-platform task management application supporting team collaboration and project management.",
+    "id": "0721",
+    "title": "0721 Automation Server",
+    "description": "基于Rust的Windows自动化工具服务器，提供丰富的系统交互能力，支持MCP协议。",
     "image": "",
-    "category": "mobile",
+    "category": "desktop",
     "techStack": [
-      "React Native",
-      "TypeScript",
-      "Redux",
-      "Firebase"
+      "Rust",
+      "Windows",
+      "Automation",
+      "MCP"
     ],
     "status": "in-progress",
-    "startDate": "2024-03-01",
-    "tags": [
-      "Mobile",
-      "Productivity",
-      "Team Collaboration"
-    ]
-  },
-  {
-    "id": "data-visualization-tool",
-    "title": "Data Visualization Tool",
-    "description": "Data visualization tool supporting multiple chart types and interactive analysis.",
-    "image": "",
-    "category": "web",
-    "techStack": [
-      "Vue.js",
-      "D3.js",
-      "TypeScript",
-      "Node.js"
-    ],
-    "status": "completed",
-    "liveDemo": "https://dataviz.example.com",
-    "visitUrl": "https://dataviz.example.com",
-    "startDate": "2023-06-01",
-    "endDate": "2023-11-01",
-    "tags": [
-      "Data Visualization",
-      "Analytics",
-      "Charts"
-    ]
-  },
-  {
-    "id": "e-commerce-platform",
-    "title": "E-commerce Platform",
-    "description": "Full-stack e-commerce platform including user management, product management, and order processing features.",
-    "image": "",
-    "category": "web",
-    "techStack": [
-      "Next.js",
-      "Node.js",
-      "PostgreSQL",
-      "Stripe"
-    ],
-    "status": "planned",
-    "startDate": "2024-07-01",
-    "tags": [
-      "E-commerce",
-      "Full Stack",
-      "Payment Integration"
-    ]
-  },
-  {
-    "id": "test-project",
-    "title": "测试",
-    "description": "测试",
-    "image": "",
-    "category": "mobile",
-    "techStack": [
-      "测试"
-    ],
-    "status": "completed",
-    "liveDemo": "https://blog.example.com",
-    "sourceCode": "https://github.com/example/mizuki",
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/0721",
     "visitUrl": "",
-    "startDate": "2025-12-04",
-    "endDate": "2025-12-06",
+    "startDate": "2025-12-02",
+    "endDate": "2025-12-03",
     "featured": true,
     "tags": [
-      "测试",
-      "测试开发"
+      "rust",
+      "windows",
+      "windows",
+      "server"
+    ]
+  },
+  {
+    "id": "obsidian-git-sync",
+    "title": "Obsidian Git Sync",
+    "description": "一个为Obsidian设计的Git同步插件,可以帮助您轻松地将Obsidian笔记与Git仓库同步。",
+    "image": "",
+    "category": "web",
+    "techStack": [],
+    "status": "completed",
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/obsidian-git-sync",
+    "visitUrl": "",
+    "startDate": "2024-08-01",
+    "endDate": "2024-08-21",
+    "featured": false,
+    "tags": [
+      "obsidian",
+      "plugin",
+      "git",
+      "sync"
+    ]
+  },
+  {
+    "id": "mapview",
+    "title": "Mapview",
+    "description": "一个streamlist的地图标点工具",
+    "image": "",
+    "category": "web",
+    "techStack": [
+      "Python"
+    ],
+    "status": "completed",
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/mapview",
+    "visitUrl": "",
+    "startDate": "",
+    "endDate": "",
+    "featured": false,
+    "tags": [
+      "Python",
+      "streamlit",
+      "map"
+    ]
+  },
+  {
+    "id": "bilibili2bangumi",
+    "title": "Bilibili2Bangumi",
+    "description": "一个将B站追番列表同步到Bangumi的工具",
+    "image": "",
+    "category": "desktop",
+    "techStack": [
+      "Python"
+    ],
+    "status": "completed",
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/Bilibili2Bangumi",
+    "visitUrl": "",
+    "startDate": "2024-08-01",
+    "endDate": "2024-08-20",
+    "featured": true,
+    "tags": [
+      "python",
+      "bilibili",
+      "bangumi",
+      "sync"
     ]
   }
 ]

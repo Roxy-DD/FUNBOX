@@ -1,6 +1,6 @@
 // Skill data configuration file
 // Auto-generated from JSON - Edit via admin dashboard
-// Last updated: 2025-12-06T08:37:53.211Z
+// Last updated: 2025-12-06T10:34:14.988Z
 
 export interface Skill {
 	id: string;
@@ -25,7 +25,7 @@ export const skillsData: Skill[] = [
     "description": "Modern JavaScript development, including ES6+ syntax, asynchronous programming, and modular development.",
     "icon": "logos:javascript",
     "category": "frontend",
-    "level": "expert",
+    "level": "advanced",
     "experience": {
       "years": 3,
       "months": 6
@@ -964,4 +964,5 @@ export const getTotalExperience = () => {
 		months: totalMonths % 12,
 	};
 };
+
 
