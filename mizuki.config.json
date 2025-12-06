@@ -2,7 +2,7 @@
   "siteConfig": {
     "title": "FunBox",
     "subtitle": "One box site",
-    "siteURL": "https://mizuki.mysqil.com/",
+    "siteURL": "https://mikufun.dpdns.org/",
     "siteStartDate": "2025-01-01",
     "timeZone": 8,
     "lang": "en",
@@ -25,10 +25,10 @@
       "icon": "assets/home/home.png"
     },
     "bangumi": {
-      "userId": "your-bangumi-id"
+      "userId": "723724"
     },
     "anime": {
-      "mode": "local"
+      "mode": "bangumi"
     },
     "postListLayout": {
       "defaultMode": "list",
