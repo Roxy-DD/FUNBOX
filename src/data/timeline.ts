@@ -1,6 +1,6 @@
 // TimelineItem data configuration file
 // Auto-generated from JSON - Edit via admin dashboard
-// Last updated: 2025-12-06T11:50:06.922Z
+// Last updated: 2025-12-06T11:52:48.812Z
 
 export interface TimelineItem {
 	id: string;
@@ -31,7 +31,7 @@ export const timelineData: TimelineItem[] = [
     "description": "在西安明德理工学院进行大学本科",
     "type": "education",
     "startDate": "2022-09-01",
-    "endDate": "2026-09-01",
+    "endDate": "",
     "location": "西安",
     "organization": "西安明德理工学院",
     "position": "",
@@ -81,7 +81,7 @@ export const timelineData: TimelineItem[] = [
     "description": "一个简单的命令行代理管理工具，用于快速切换本地 HTTP/HTTPS 代理。",
     "type": "project",
     "startDate": "2025-12-03",
-    "endDate": "2025-12-03",
+    "endDate": "2025-12-06",
     "location": "西安",
     "organization": "",
     "position": "",
@@ -90,7 +90,7 @@ export const timelineData: TimelineItem[] = [
     "links": [],
     "icon": "",
     "color": "#000000",
-    "featured": false
+    "featured": true
   },
   {
     "id": "obsidian-git-sync",
@@ -98,7 +98,7 @@ export const timelineData: TimelineItem[] = [
     "description": "一个为Obsidian设计的Git同步插件,可以帮助您轻松地将Obsidian笔记与Git仓库同步。",
     "type": "project",
     "startDate": "2024-10-14",
-    "endDate": "",
+    "endDate": "2024-10-30",
     "location": "",
     "organization": "",
     "position": "",
@@ -115,7 +115,7 @@ export const timelineData: TimelineItem[] = [
     "description": "一个将B站追番列表同步到Bangumi的工具",
     "type": "project",
     "startDate": "2024-08-01",
-    "endDate": "",
+    "endDate": "2024-08-20",
     "location": "",
     "organization": "",
     "position": "",
@@ -191,6 +191,9 @@ export const getTotalWorkExperience = () => {
 		months: totalMonths % 12,
 	};
 };
+
+
+
 
 
 
