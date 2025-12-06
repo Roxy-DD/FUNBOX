@@ -1,16 +1,15 @@
 ---
-title: 使用Rust构建现代化的PowerShell代理管理工具
-description: '使用Rust构建现代化的PowerShell代理管理工具'
-published: 2025-12-05
+title: '使用 Rust 构建现代化的 PowerShell 代理管理工具'
+description: '使用 Rust 构建现代化的 PowerShell 代理管理工具'
+published: 2025-12-06
 draft: false
 tags:
-  - 模板
-  - temple
-category: 模板
+  - Rust
+  - 工具
+category: Rust笔记
 pinned: false
 image: ''
 ---
-
 
 # 使用 Rust 构建现代化的 PowerShell 代理管理工具：技术深度解析
 
