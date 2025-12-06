@@ -188,22 +188,25 @@ Admin dashboard will be available at:
 
 ## 📸 Screenshots
 
-<!-- Add screenshots here -->
-**Dashboard**:
-- Admin dashboard overview
+### Dashboard Overview
+![Admin Dashboard](docs/image/admin/dashboard.png)
+*Main dashboard showing statistics and recent activity*
 
-**Projects CRUD**:
-- Projects list with edit/delete buttons
-- Project form modal
-- Delete confirmation dialog
+### Projects Management
+![Projects CRUD](docs/image/admin/projects.png)
+*Projects list with search, filters, and CRUD controls. Hover over cards to reveal edit/delete buttons*
 
-**Skills CRUD**:
-- Skills grouped by category
-- Skill form with experience tracking
+### Skills Management
+![Skills Management](docs/image/admin/skills.png)
+*Skills grouped by category with level badges and statistics*
 
-**Timeline CRUD**:
-- Timeline chronological view
-- Timeline event form
+### Timeline Management
+![Timeline View](docs/image/admin/timeline.png)
+*Chronological timeline display with event details and CRUD controls*
+
+### Demo Recording
+![Admin Dashboard Demo](file:///C:/Users/xuee/.gemini/antigravity/brain/89f1d0c2-be89-4cbb-bb74-a410e6cfa210/admin_dashboard_1765011016195.webp)
+*Full demonstration of navigating through all admin features*
 
 ## 🔄 Migration Guide
 
