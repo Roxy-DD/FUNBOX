@@ -1,6 +1,6 @@
 // Project data configuration file
 // Auto-generated from JSON - Edit via admin dashboard
-// Last updated: 2025-12-06T11:46:24.096Z
+// Last updated: 2025-12-08T13:26:06.568Z
 
 export interface Project {
 	id: string;
@@ -207,6 +207,32 @@ export const projectsData: Project[] = [
       "bangumi",
       "sync"
     ]
+  },
+  {
+    "id": "galremote",
+    "title": "galremote",
+    "description": "About\nGalRemote 是在原始 Sunshine 及 Sunshine 基地版基础上进行的深度定制版本，专为 Galgame 玩家 打造。不仅继承了基地版的所有优秀特性（HDR、虚拟显示器等），还集成了全新的 Galgame 管理功能和更加现代化的控制面板。",
+    "image": "",
+    "category": "desktop",
+    "techStack": [
+      "Rust",
+      "Vue",
+      "React",
+      "Tauri"
+    ],
+    "status": "in-progress",
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/galremote",
+    "visitUrl": "",
+    "startDate": "2025-11-26",
+    "endDate": "",
+    "featured": true,
+    "tags": [
+      "Rust",
+      "Vue",
+      "React",
+      "Tauri"
+    ]
   }
 ];
 
@@ -252,6 +278,7 @@ export const getAllTechStack = () => {
 	});
 	return Array.from(techSet).sort();
 };
+
 
 
 
