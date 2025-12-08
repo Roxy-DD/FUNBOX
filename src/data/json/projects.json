@@ -212,5 +212,29 @@
       "React",
       "Tauri"
     ]
+  },
+  {
+    "id": "galremote-control-panel",
+    "title": "galremote-control-panel",
+    "description": "基于 Tauri 2.8.4 的 Galremote 控制面板 GUI。",
+    "image": "",
+    "category": "web",
+    "techStack": [
+      "Rust",
+      "Vue",
+      "Tauri"
+    ],
+    "status": "in-progress",
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/galremote-control-panel",
+    "visitUrl": "",
+    "startDate": "2025-11-29",
+    "endDate": "",
+    "featured": false,
+    "tags": [
+      "Rust",
+      "Vue",
+      "Tauri"
+    ]
   }
 ]

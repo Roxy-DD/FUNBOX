@@ -1,6 +1,6 @@
 // Project data configuration file
 // Auto-generated from JSON - Edit via admin dashboard
-// Last updated: 2025-12-08T13:26:06.568Z
+// Last updated: 2025-12-08T13:27:34.460Z
 
 export interface Project {
 	id: string;
@@ -233,6 +233,30 @@ export const projectsData: Project[] = [
       "React",
       "Tauri"
     ]
+  },
+  {
+    "id": "galremote-control-panel",
+    "title": "galremote-control-panel",
+    "description": "基于 Tauri 2.8.4 的 Galremote 控制面板 GUI。",
+    "image": "",
+    "category": "web",
+    "techStack": [
+      "Rust",
+      "Vue",
+      "Tauri"
+    ],
+    "status": "in-progress",
+    "liveDemo": "",
+    "sourceCode": "https://github.com/Roxy-DD/galremote-control-panel",
+    "visitUrl": "",
+    "startDate": "2025-11-29",
+    "endDate": "",
+    "featured": false,
+    "tags": [
+      "Rust",
+      "Vue",
+      "Tauri"
+    ]
   }
 ];
 
@@ -278,6 +302,7 @@ export const getAllTechStack = () => {
 	});
 	return Array.from(techSet).sort();
 };
+
 
 
 
