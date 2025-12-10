@@ -3,7 +3,7 @@ title: "\U0001F680 告别“黑底白字”！Windows Terminal 终极美化指�
 description: >-
   还在忍受 Windows 自带那个又丑又慢的蓝色框框？羡慕 Mac/Linux 用户那样酷炫的终端？今天带你用一套“组合拳”，把你的 Windows
   Terminal 变成效率与颜值兼备的开发神器！支持秒开、智能提示、图标显示和网格布局。包含一键懒人脚本！
-published: '2025-12-11T00:00:00.000Z'
+published: 2025-12-11
 draft: false
 tags:
   - 工具
@@ -23,11 +23,11 @@ image: ''
 **我们想要的是这样的终端：**
 
 1. **颜值即正义**：要有高大上的提示符（Prompt），不仅好看，还要能显示 Git 分支、Python 版本、运行时间。
-    
+   
 2. **一目了然**：`ls` 列出文件时，不仅要有颜色，还要有图标，最好能像 Linux 那样整齐的网格平铺。
-    
+   
 3. **速度要快**：不能为了美化牺牲启动速度，必须秒开！
-    
+   
 
 今天，我们使用 **PowerShell 7 + Oh My Posh (Spaceship主题) + Eza + Vivid** 这套目前 GitHub 上最流行的黄金搭档来实现它！
 
@@ -42,22 +42,22 @@ image: ''
 别用老的 `cmd` 了！
 
 - 去 **Microsoft Store** 搜索下载 **Windows Terminal**。
-    
+  
 - 去 **Microsoft Store** 搜索下载 **PowerShell** (图标是黑色的，不是蓝色的！)。
-    
+  
 - 打开 Windows Terminal 设置，把**默认配置文件**改成黑色的 PowerShell。
-    
+  
 
 ### 2. 安装 Nerd Font 字体 (乱码救星) 🚨
 
 **这是 99% 的人失败的原因！** 普通字体没有那些漂亮的图标（Git 分支图标、文件夹图标）。
 
 - **下载**：推荐 [MesloLGM Nerd Font](https://www.google.com/search?q=https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Meslo.zip) 或 [CaskaydiaCove Nerd Font](https://www.google.com/search?q=https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/CascadiaCode.zip)。
-    
+  
 - **安装**：解压 -> 全选 ttf 文件 -> 右键“安装”。
-    
+  
 - **配置**：打开 Windows Terminal 设置 -> 左侧选择“PowerShell” -> **外观** -> **字体** -> 选择你刚才安装的 Nerd Font -> **保存**。
-    
+  
 
 ---
 
@@ -78,9 +78,9 @@ image: ''
 **使用方法：**
 
 1. **右键** Windows Terminal，选择**“以管理员身份运行”**。
-    
+   
 2. 复制下面所有代码，粘贴进终端，回车！
-    
+   
 
 PowerShell
 
@@ -177,22 +177,22 @@ Write-Host "------------------------------------------------"
 你现在使用的是 **Spaceship** 主题。
 
 - **平时**：它非常干净，只显示路径，不打扰你。
-    
+  
 - **Git仓库**：进入有 `.git` 的文件夹，它会自动显示 `on  main` (分支名) 和状态颜色。
-    
+  
 - **Python/Node**：进入代码目录，它会显示 `via 🐍 3.10` 或 `via ⬢ 18.0`。
-    
+  
 
 ### 2. 超级列表命令
 
 别再用原来的 `dir` 或 `ls` 了，试试这两个新命令：
 
 - 输入 ls：
-    
+  
     你会看到类似 Linux 的网格平铺视图！文件图标一目了然，文件夹自动排在最前面，颜色使用的是舒适的 Gruvbox 暖色调。
     
 - 输入 lg (List Grid)：
-    
+  
     这是我最推荐的视图！它既保留了网格布局（省空间），又显示了文件大小和修改时间。卡片式的信息展示，极度舒适。
     
 
@@ -205,13 +205,13 @@ Write-Host "------------------------------------------------"
 **30秒解决法：**
 
 1. 打开 **Windows 安全中心** -> 病毒和威胁防护 -> 管理设置 -> **排除项**。
-    
+   
 2. 添加两个**“进程”**排除项（注意选进程）：
-    
+   
     - `oh-my-posh.exe`
-        
+      
     - `eza.exe`
-        
+      
 
 做完这一步，你的终端就是真正的**瞬开**了。
 
