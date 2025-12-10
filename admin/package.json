@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"pnpm run server\" \"pnpm run client\"",
     "server": "node server.js",
-    "client": "vite",
+    "client": "vite --open",
     "build": "vite build"
   },
   "dependencies": {
