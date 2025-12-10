@@ -1,17 +1,17 @@
 ---
-title: 🚀 告别“黑底白字”！Windows Terminal 终极美化指南：打造你的神级终端 (PowerShell 7 + Oh My Posh + Eza)
-description: 还在忍受 Windows 自带那个又丑又慢的蓝色框框？羡慕 Mac/Linux 用户那样酷炫的终端？今天带你用一套“组合拳”，把你的 Windows Terminal 变成效率与颜值兼备的开发神器！支持秒开、智能提示、图标显示和网格布局。包含一键懒人脚本！
-published: 2025-12-11
+title: "\U0001F680 告别“黑底白字”！Windows Terminal 终极美化指南：打造你的神级终端 (PowerShell 7 + Oh My Posh + Eza)"
+description: >-
+  还在忍受 Windows 自带那个又丑又慢的蓝色框框？羡慕 Mac/Linux 用户那样酷炫的终端？今天带你用一套“组合拳”，把你的 Windows
+  Terminal 变成效率与颜值兼备的开发神器！支持秒开、智能提示、图标显示和网格布局。包含一键懒人脚本！
+published: '2025-12-11T00:00:00.000Z'
 draft: false
 tags:
   - 工具
   - 指南
 category: 指南
 pinned: false
-image: ""
+image: ''
 ---
-正文模板
-
 > **摘要**：还在忍受 Windows 自带那个又丑又慢的蓝色框框？羡慕 Mac/Linux 用户那样酷炫的终端？今天带你用一套“组合拳”，把你的 Windows Terminal 变成效率与颜值兼备的开发神器！支持**秒开**、**智能提示**、**图标显示**和**网格布局**。包含**一键懒人脚本**！
 
 ---
