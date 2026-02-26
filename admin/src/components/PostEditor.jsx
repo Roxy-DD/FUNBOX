@@ -7,7 +7,7 @@ import {
     Quote, Code, Heading1, Heading2, Heading3, Table as TableIcon, Pin, FileImage,
     AlignLeft, Loader2, Minus, CheckSquare, Undo2, Redo2,
     ChevronDown, ChevronRight, Calendar, Tag, Folder, FileText,
-    PanelRightOpen, PanelRightClose, Type, Hash, Clock
+    PanelRightOpen, PanelRightClose, Type, Hash, Clock, X
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -16,7 +16,7 @@ import 'highlight.js/styles/github-dark.css';
 import './EditorPreview.css';
 import MediaPicker from './MediaPicker';
 
-export default function PostEditor({ slug, onBack }) {
+export default function PostEditor({ slug, existingCategories = [], existingTags = [], onBack }) {
     const { t, lang } = useLanguage();
     const toast = useToast();
     const [content, setContent] = useState('');
@@ -390,31 +390,27 @@ export default function PostEditor({ slug, onBack }) {
                                     />
                                 </SidebarField>
                                 <SidebarField label={lang === 'zh' ? '分类' : 'Category'} icon={Folder}>
-                                    <input
-                                        type="text"
-                                        className="sidebar-input"
-                                        value={metadata.category || ''}
-                                        onChange={e => setMetadata({ ...metadata, category: e.target.value })}
-                                        placeholder={t('posts.editor.placeholder.category')}
-                                    />
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            list="category-options"
+                                            className="sidebar-input"
+                                            value={metadata.category || ''}
+                                            onChange={e => setMetadata({ ...metadata, category: e.target.value })}
+                                            placeholder={t('posts.editor.placeholder.category')}
+                                        />
+                                        <datalist id="category-options">
+                                            {existingCategories.map(c => <option key={c} value={c} />)}
+                                        </datalist>
+                                    </div>
                                 </SidebarField>
                                 <SidebarField label={lang === 'zh' ? '标签' : 'Tags'} icon={Tag}>
-                                    <input
-                                        type="text"
-                                        className="sidebar-input"
-                                        value={metadata.tags}
-                                        onChange={e => setMetadata({ ...metadata, tags: e.target.value })}
-                                        placeholder={t('posts.editor.placeholder.tags')}
+                                    <TagInput 
+                                        value={metadata.tags} 
+                                        onChange={tagsArr => setMetadata({ ...metadata, tags: tagsArr.join(', ') })} 
+                                        options={existingTags} 
+                                        placeholder={t('posts.editor.placeholder.tags')} 
                                     />
-                                    {metadata.tags && (
-                                        <div className="flex flex-wrap gap-1 mt-1.5">
-                                            {(typeof metadata.tags === 'string' ? metadata.tags.split(',') : metadata.tags).map((tag, i) => {
-                                                const t = (tag || '').trim();
-                                                if (!t) return null;
-                                                return <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[10px] font-medium">{t}</span>;
-                                            })}
-                                        </div>
-                                    )}
                                 </SidebarField>
                             </SidebarSection>
 
@@ -583,4 +579,76 @@ function ToolbarButton({ icon: Icon, onClick, shortcut }) {
 
 function Sep() {
     return <div className="w-px h-4 bg-gray-200 mx-1" />;
+}
+
+function TagInput({ value, onChange, options, placeholder }) {
+    const [inputVal, setInputVal] = React.useState('');
+    const [showSuggestions, setShowSuggestions] = React.useState(false);
+
+    const tags = Array.isArray(value) ? value : (typeof value === 'string' ? value.split(',').map(t=>t.trim()).filter(Boolean) : []);
+
+    const handleAdd = (tag) => {
+        const trimmed = tag.trim();
+        if (trimmed && !tags.includes(trimmed)) {
+            onChange([...tags, trimmed]);
+        }
+        setInputVal('');
+        setShowSuggestions(false);
+    };
+
+    const handleRemove = (tagToRemove) => {
+        onChange(tags.filter(t => t !== tagToRemove));
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            if (inputVal) handleAdd(inputVal);
+        } else if (e.key === 'Backspace' && !inputVal && tags.length > 0) {
+            handleRemove(tags[tags.length - 1]);
+        }
+    };
+
+    const suggestions = options.filter(o => o.toLowerCase().includes(inputVal.toLowerCase()) && !tags.includes(o));
+
+    return (
+        <div className="relative">
+            <div className="flex flex-wrap gap-1.5 p-1.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-lg focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/15 transition-all text-xs min-h-[34px]">
+                {tags.map(t => (
+                    <span key={t} className="flex items-center gap-1 px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-md font-medium group">
+                        {t}
+                        <button onClick={() => handleRemove(t)} className="text-indigo-400 hover:text-indigo-800 focus:outline-none">
+                            <X size={10} />
+                        </button>
+                    </span>
+                ))}
+                <input
+                    type="text"
+                    className="flex-1 min-w-[60px] bg-transparent outline-none text-gray-700 py-0.5 px-1"
+                    placeholder={tags.length === 0 ? placeholder : ''}
+                    value={inputVal}
+                    onChange={e => {
+                        setInputVal(e.target.value);
+                        setShowSuggestions(true);
+                    }}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                    onKeyDown={handleKeyDown}
+                />
+            </div>
+            {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                    {suggestions.map(s => (
+                        <div
+                            key={s}
+                            className="px-3 py-2 text-xs text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer transition-colors"
+                            onMouseDown={(e) => { e.preventDefault(); handleAdd(s); }}
+                        >
+                            {s}
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 }

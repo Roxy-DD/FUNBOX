@@ -112,7 +112,7 @@ export default function Posts() {
     }, [posts, searchQuery, selectedCategory, selectedTag, sortBy]);
 
     if (editingPost) {
-        return <PostEditor slug={editingPost} onBack={() => { setEditingPost(null); loadPosts(); }} />;
+        return <PostEditor slug={editingPost} existingCategories={categories} existingTags={tags} onBack={() => { setEditingPost(null); loadPosts(); }} />;
     }
 
     return (
