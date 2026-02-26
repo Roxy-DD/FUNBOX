@@ -131,14 +131,16 @@ app.post('/api/posts', async (req, res) => {
     // Ensure subdirectory exists
     await ensureDir(path.dirname(filePath));
     
+    // Ensure dates are true Date objects so gray-matter outputs them without quotes
+    if (metadata.published) {
+        metadata.published = new Date(metadata.published);
+    }
+    if (metadata.updated) {
+        metadata.updated = new Date(metadata.updated);
+    }
+    
     // Construct file content with frontmatter
     let fileContent = matter.stringify(content, metadata);
-    
-    // Remove quotes from date fields (published, updated)
-    fileContent = fileContent.replace(
-      /(published|updated):\s*['"]?(\d{4}-\d{2}-\d{2})['"]?$/gm,
-      '$1: $2'
-    );
     
     await fs.writeFile(filePath, fileContent, 'utf-8');
     res.json({ success: true });

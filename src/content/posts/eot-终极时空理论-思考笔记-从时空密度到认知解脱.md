@@ -1,7 +1,7 @@
 ---
 title: 思考笔记：从时空密度到认知解脱
 description: ''
-published: '2026-02-26T00:00:00.000Z'
+published: 2026-02-26T00:00:00.000Z
 draft: false
 tags:
   - EOT
