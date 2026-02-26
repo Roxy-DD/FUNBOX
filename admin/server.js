@@ -40,7 +40,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const app = express();
-const PORT = 3001;
+const PORT = 5174;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -74,22 +74,35 @@ app.post('/api/config', async (req, res) => {
   }
 });
 
-// API: List Posts
+// Helper to recursively find all .md files
+async function findMarkdownFiles(dir, base = '') {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const relPath = base ? `${base}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      files.push(...await findMarkdownFiles(path.join(dir, entry.name), relPath));
+    } else if (entry.name.endsWith('.md')) {
+      files.push(relPath);
+    }
+  }
+  return files;
+}
+
+// API: List Posts (with subdirectory support)
 app.get('/api/posts', async (req, res) => {
   try {
     await ensureDir(POSTS_DIR);
-    const files = await fs.readdir(POSTS_DIR);
+    const files = await findMarkdownFiles(POSTS_DIR);
     const posts = [];
     
     for (const file of files) {
-      if (file.endsWith('.md')) {
-        const content = await fs.readFile(path.join(POSTS_DIR, file), 'utf-8');
-        const { data } = matter(content);
-        posts.push({
-          slug: file.replace('.md', ''),
-          ...data
-        });
-      }
+      const content = await fs.readFile(path.join(POSTS_DIR, file), 'utf-8');
+      const { data } = matter(content);
+      posts.push({
+        slug: file.replace('.md', '').replace(/\\/g, '/'),
+        ...data
+      });
     }
     res.json(posts);
   } catch (error) {
@@ -97,8 +110,8 @@ app.get('/api/posts', async (req, res) => {
   }
 });
 
-// API: Get Post
-app.get('/api/posts/:slug', async (req, res) => {
+// API: Get Post (supports subdir/slug format)
+app.get('/api/posts/:slug(*)', async (req, res) => {
   try {
     const filePath = path.join(POSTS_DIR, `${req.params.slug}.md`);
     const fileContent = await fs.readFile(filePath, 'utf-8');
@@ -109,24 +122,24 @@ app.get('/api/posts/:slug', async (req, res) => {
   }
 });
 
-// API: Create/Update Post
+// API: Create/Update Post (supports subdir/slug format)
 app.post('/api/posts', async (req, res) => {
   try {
     const { slug, metadata, content } = req.body;
-    await ensureDir(POSTS_DIR);
+    const filePath = path.join(POSTS_DIR, `${slug}.md`);
+    
+    // Ensure subdirectory exists
+    await ensureDir(path.dirname(filePath));
     
     // Construct file content with frontmatter
     let fileContent = matter.stringify(content, metadata);
     
     // Remove quotes from date fields (published, updated)
-    // Match: published: 'YYYY-MM-DD' or published: "YYYY-MM-DD"
-    // Replace with: published: YYYY-MM-DD
     fileContent = fileContent.replace(
-      /(published|updated):\s*['"](\d{4}-\d{2}-\d{2})['"]$/gm,
+      /(published|updated):\s*['"]?(\d{4}-\d{2}-\d{2})['"]?$/gm,
       '$1: $2'
     );
     
-    const filePath = path.join(POSTS_DIR, `${slug}.md`);
     await fs.writeFile(filePath, fileContent, 'utf-8');
     res.json({ success: true });
   } catch (error) {
@@ -134,8 +147,8 @@ app.post('/api/posts', async (req, res) => {
   }
 });
 
-// API: Delete Post
-app.delete('/api/posts/:slug', async (req, res) => {
+// API: Delete Post (supports subdir/slug format)
+app.delete('/api/posts/:slug(*)', async (req, res) => {
   try {
     const filePath = path.join(POSTS_DIR, `${req.params.slug}.md`);
     await fs.unlink(filePath);

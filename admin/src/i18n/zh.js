@@ -4,7 +4,7 @@ export default {
     settings: "设置",
     posts: "文章管理",
     save: "保存",
-    saved: "已保存!",
+    saved: "保存成功！",
     cancel: "取消",
     confirm: "确认",
     back: "返回",
@@ -12,11 +12,11 @@ export default {
     edit: "编辑",
     create: "新建文章",
     viewSite: "预览博客",
-    welcome: "欢迎回到您的仪表盘。",
+    loading: "加载中...",
+    welcome: "欢迎回到您的工作台。",
     viewAll: "查看全部",
     noActivity: "暂无动态",
     comingSoon: "即将推出",
-    dashboard: "仪表盘",
     stats: {
         totalPosts: "文章总数",
         published: "已发布",
@@ -31,12 +31,18 @@ export default {
         media: "媒体库",
         preview: "预览站点"
     },
+    activity: {
+        title: "最近动态"
+    },
     media: {
         title: "媒体库",
         upload: "上传图片",
         dragDrop: "拖拽图片到此处或点击上传",
         copySuccess: "链接已复制",
         deleteConfirm: "确定要删除这张图片吗？",
+        empty: "暂无媒体文件",
+        items: "个文件",
+        uploading: "上传中..."
     },
     tabs: {
       general: "常规",
@@ -125,7 +131,7 @@ export default {
       baseUrl: "Base URL",
       scriptUrl: "脚本 URL",
       userId: "用户 ID",
-      navbarJsonTip: "导航栏链接配置较为复杂，请前往“高级 (JSON)”选项卡进行修改。",
+      navbarJsonTip: "导航栏链接配置较为复杂，请前往【高级 (JSON)】选项卡进行修改。",
       customFooter: "启用自定义页脚",
       htmlContent: "HTML 内容",
       useJapaneseBadge: "使用日文样式徽章",
@@ -133,9 +139,7 @@ export default {
       enableUmami: "启用统计",
       reorderTip: "排序功能开发中，请暂使用 JSON 编辑器修改。",
       faviconTip: "Favicon 数组配置较为复杂，请使用 JSON 编辑器。",
-      scriptTagTip: "通常填写完整的 <script> 标签",
-
-      // Advanced
+      scriptTagTip: "通常填写完整的 script 标签",
       bannerAdvanced: "横幅高级设置",
       enableWaves: "启用波浪特效",
       performanceMode: "性能模式 (简化效果)",
@@ -149,14 +153,12 @@ export default {
       mode: "模式 (Mode)",
       metingApi: "Meting API 地址",
       sakuraNum: "樱花数量",
-      zIndex: "层级 (Z-Index)",
       speed: "打字速度",
       bangumiUserId: "Bangumi 用户 ID",
       localData: "本地数据",
       bangumiApi: "Bangumi API",
       sidebarPosition: "侧边栏位置",
       components: "侧边栏组件",
-      mode: "模式",
       depth: "深度",
       fontWeight: "字重",
       enableCompress: "启用压缩",
@@ -167,7 +169,6 @@ export default {
       height: "高度",
       websiteId: "网站 ID (Website ID)",
       typewriter: "打字机特效",
-      speed: "速度",
       linkTarget: "公告跳转按钮",
       url: "跳转链接"
     },
@@ -178,6 +179,7 @@ export default {
       title: "标题",
       date: "日期",
       category: "分类",
+      tags: "标签",
       status: "状态",
       actions: "操作"
     },
@@ -190,15 +192,15 @@ export default {
       editPost: "编辑文章",
       metadata: "文章属性",
       content: "正文 (Markdown)",
-      slug: "文件名 (Slug)",
+      slug: "文件名",
       title: "标题",
       description: "描述/摘要",
       date: "发布日期",
       category: "分类",
-      tags: "标签 (逗号分隔)",
-      coverImage: "封面图片链接",
-      draft: "设为草稿",
-      pinned: "置顶文章",
+      tags: "标签",
+      coverImage: "封面图片",
+      draft: "草稿",
+      pinned: "置顶",
       slugRequired: "文件名不能为空",
       titleRequired: "标题不能为空",
       toolbar: {
@@ -216,11 +218,15 @@ export default {
       },
       placeholder: {
           content: "# 开始创作你的杰作...",
-          tags: "标签...",
+          tags: "标签1, 标签2, ...",
           category: "未分类",
           title: "请输入标题"
       },
-      preview: "预览"
+      preview: "预览",
+      mediaPicker: {
+          selectHint: "选择图片插入",
+          insert: "插入图片"
+      }
     },
     filter: {
       search: "搜索文章...",
@@ -239,5 +245,42 @@ export default {
     },
     empty: "暂无文章",
     noResults: "未找到匹配的文章"
+  },
+  settings: {
+    title: "设置",
+    tabs: {
+      general: "常规",
+      appearance: "外观",
+      layout: "布局",
+      components: "组件",
+      features: "功能",
+      advanced: "高级 (JSON)"
+    },
+    jsonTip: "直接编辑底层 JSON 配置。在此处进行的更改可以实现 UI 尚未支持的高级定制。"
+  },
+  media: {
+    title: "媒体库",
+    upload: "上传图片",
+    dragDrop: "拖拽图片到此处或点击上传",
+    copySuccess: "链接已复制！",
+    deleteConfirm: "确定要删除这张图片吗？",
+    empty: "暂无媒体文件",
+    items: "个文件",
+    uploading: "上传中..."
+  },
+  topbar: {
+    syncToRemote: "同步到远端",
+    syncing: "同步中...",
+    syncSuccess: "同步成功！",
+    syncFailed: "同步失败"
+  },
+  git: {
+    status: "Git 同步",
+    hasChanges: "{{count}} 个文件已修改",
+    noChanges: "所有内容已同步",
+    syncing: "同步中...",
+    syncNow: "立即同步",
+    success: "同步成功！",
+    error: "同步失败"
   }
 };

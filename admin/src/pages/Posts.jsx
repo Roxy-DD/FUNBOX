@@ -103,8 +103,8 @@ export default function Posts() {
                 return matchesSearch && matchesCategory && matchesTag;
             })
             .sort((a, b) => {
-                if (sortBy === 'newest') return new Date(b.date || 0) - new Date(a.date || 0);
-                if (sortBy === 'oldest') return new Date(a.date || 0) - new Date(b.date || 0);
+                if (sortBy === 'newest') return new Date(b.published || 0) - new Date(a.published || 0);
+                if (sortBy === 'oldest') return new Date(a.published || 0) - new Date(b.published || 0);
                 if (sortBy === 'titleAZ') return (a.title || '').localeCompare(b.title || '');
                 if (sortBy === 'titleZA') return (b.title || '').localeCompare(a.title || '');
                 return 0;
@@ -264,7 +264,7 @@ export default function Posts() {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                             <div className="flex items-center gap-1">
                                                 <Calendar size={14} className="text-gray-400" />
-                                                {post.date ? new Date(post.date).toLocaleDateString() : '-'}
+                                                {post.published ? new Date(post.published).toLocaleDateString() : '-'}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">

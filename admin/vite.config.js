@@ -8,9 +8,9 @@ export default defineConfig({
 // root: 'admin' - Removed incorrect root
   // The server is run from CWD=admin, so default root '.' is correct.
   server: {
-    port: 3000,
+    port: 5173,
     proxy: {
-      '/api': 'http://localhost:3001'
+      '/api': 'http://localhost:5174'
     }
   }
 })

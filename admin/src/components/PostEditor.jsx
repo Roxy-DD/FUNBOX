@@ -1,61 +1,124 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { 
-    FileText, Save, ArrowLeft, Eye, Edit3, Columns, 
-    Bold, Italic, List, ListOrdered, Link as LinkIcon, Image as ImageIcon,
-    Quote, Code, Heading1, Heading2, Table as TableIcon
+import { useToast } from '../context/ToastContext';
+import {
+    Save, ArrowLeft, Eye, Edit3, Columns,
+    Bold, Italic, Strikethrough, List, ListOrdered, Link as LinkIcon, Image as ImageIcon,
+    Quote, Code, Heading1, Heading2, Heading3, Table as TableIcon, Pin, FileImage,
+    AlignLeft, Loader2, Minus, CheckSquare, Undo2, Redo2,
+    ChevronDown, ChevronRight, Calendar, Tag, Folder, FileText,
+    PanelRightOpen, PanelRightClose, Type, Hash, Clock
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import 'highlight.js/styles/github.css'; 
+import 'highlight.js/styles/github-dark.css';
+import './EditorPreview.css';
+import MediaPicker from './MediaPicker';
 
 export default function PostEditor({ slug, onBack }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
+    const toast = useToast();
     const [content, setContent] = useState('');
-    const [viewMode, setViewMode] = useState('split'); // edit, preview, split
+    const [originalContent, setOriginalContent] = useState('');
+    const [viewMode, setViewMode] = useState('split');
+    const [saving, setSaving] = useState(false);
+    const [showSidebar, setShowSidebar] = useState(true);
+    const [showMediaPicker, setShowMediaPicker] = useState(false);
     const [metadata, setMetadata] = useState({
-        title: '',
-        description: '',
+        title: '', description: '',
         published: new Date().toISOString().split('T')[0],
-        draft: false,
-        tags: '',
-        category: '',
-        pinned: false,
-        image: '',
+        draft: false, tags: '', category: '',
+        pinned: false, image: '',
     });
+    const [originalMeta, setOriginalMeta] = useState(null);
     const [slugName, setSlugName] = useState(slug === 'new' ? '' : slug);
     const [loading, setLoading] = useState(slug !== 'new');
+    const editorRef = useRef(null);
+    const previewRef = useRef(null);
+    const [history, setHistory] = useState([]);
+    const [historyIndex, setHistoryIndex] = useState(-1);
+    const [sidebarSections, setSidebarSections] = useState({
+        basic: true, seo: true, publish: true,
+    });
 
+    // Load post data
     useEffect(() => {
         if (slug !== 'new') {
             fetch(`/api/posts/${slug}`)
                 .then(res => res.json())
                 .then(data => {
-                    setContent(data.content);
-                    const tags = Array.isArray(data.metadata.tags) 
-                        ? data.metadata.tags.join(', ') 
+                    const tags = Array.isArray(data.metadata.tags)
+                        ? data.metadata.tags.join(', ')
                         : (data.metadata.tags || '');
-                    setMetadata({
-                        ...data.metadata,
-                        tags: tags
-                    });
+                    const meta = { ...data.metadata, tags };
+                    setContent(data.content || '');
+                    setOriginalContent(data.content || '');
+                    setMetadata(meta);
+                    setOriginalMeta(meta);
                     setLoading(false);
                 });
+        } else {
+            setOriginalContent('');
+            setOriginalMeta({ ...metadata });
         }
     }, [slug]);
 
-    const handleSave = () => {
-        if (!slugName) return alert(t('posts.editor.slugRequired'));
-        if (!metadata.title) return alert(t('posts.editor.titleRequired'));
+    // Unsaved changes detection
+    const hasUnsavedChanges = useMemo(() => {
+        if (!originalMeta) return false;
+        const metaChanged = JSON.stringify(metadata) !== JSON.stringify(originalMeta);
+        return content !== originalContent || metaChanged;
+    }, [content, originalContent, metadata, originalMeta]);
 
+    useEffect(() => {
+        const handler = (e) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handler);
+        return () => window.removeEventListener('beforeunload', handler);
+    }, [hasUnsavedChanges]);
+
+    // Word/character count
+    const wordStats = useMemo(() => {
+        const chars = content.length;
+        // CJK-aware word count
+        const cjk = (content.match(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/g) || []).length;
+        const nonCjk = content.replace(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/g, ' ');
+        const words = cjk + (nonCjk.trim() ? nonCjk.trim().split(/\s+/).filter(Boolean).length : 0);
+        const readMin = Math.max(1, Math.ceil(words / 300));
+        return { chars, words, readMin };
+    }, [content]);
+
+    // Auto-generate slug from title (new posts only)
+    useEffect(() => {
+        if (slug === 'new' && metadata.title && !slugName) {
+            const auto = metadata.title
+                .toLowerCase()
+                .replace(/[\u4e00-\u9fff]+/g, m => m) // keep CJK
+                .replace(/[^\w\u4e00-\u9fff-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '')
+                .substring(0, 60);
+            setSlugName(auto);
+        }
+    }, [metadata.title, slug]);
+
+    // Save
+    const handleSave = useCallback(() => {
+        if (!slugName) return toast.warning(t('posts.editor.slugRequired'));
+        if (!metadata.title) return toast.warning(t('posts.editor.titleRequired'));
+
+        setSaving(true);
         const payload = {
-            slug: slugName,
-            content,
+            slug: slugName, content,
             metadata: {
                 ...metadata,
-                tags: typeof metadata.tags === 'string' 
-                    ? metadata.tags.split(',').map(t => t.trim()).filter(Boolean) 
+                tags: typeof metadata.tags === 'string'
+                    ? metadata.tags.split(',').map(t => t.trim()).filter(Boolean)
                     : metadata.tags
             }
         };
@@ -65,195 +128,459 @@ export default function PostEditor({ slug, onBack }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
-        .then(() => {
-            alert(t('common.saved'));
-            if (slug === 'new') onBack(); 
-        });
-    };
+            .then(res => res.json())
+            .then(() => {
+                toast.success(t('common.saved'));
+                setOriginalContent(content);
+                setOriginalMeta({ ...metadata });
+                if (slug === 'new') onBack();
+            })
+            .catch(err => toast.error(err.message))
+            .finally(() => setSaving(false));
+    }, [slugName, metadata, content, slug, onBack, t, toast]);
 
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handler = (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                handleSave();
+            }
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, [handleSave]);
+
+    // Insert text helper
     const insertText = (before, after = '') => {
-        const textarea = document.getElementById('markdown-editor');
+        const textarea = editorRef.current;
         if (!textarea) return;
-
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-        const selectedText = content.substring(start, end);
-        const newText = content.substring(0, start) + before + selectedText + after + content.substring(end);
-        
+        const sel = content.substring(start, end);
+        const newText = content.substring(0, start) + before + sel + after + content.substring(end);
         setContent(newText);
-        
-        // Restore focus and selection
         setTimeout(() => {
             textarea.focus();
             textarea.setSelectionRange(start + before.length, end + before.length);
         }, 0);
     };
 
-    if (loading) return <div className="p-8 text-center text-gray-500">{t('common.loading')}</div>;
+    // Tab key support
+    const handleKeyDown = (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            insertText('  ');
+        }
+    };
+
+    // Media picker callback
+    const handleMediaSelect = (path) => {
+        insertText(`![](${path})`);
+    };
+
+    // Clipboard image paste
+    const handlePaste = async (e) => {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+        for (const item of items) {
+            if (item.type.startsWith('image/')) {
+                e.preventDefault();
+                const file = item.getAsFile();
+                const formData = new FormData();
+                formData.append('file', file);
+                toast.info(lang === 'zh' ? '正在上传剪贴板图片...' : 'Uploading clipboard image...');
+                try {
+                    const res = await fetch('/api/media', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.path) {
+                        insertText(`![](${data.path})`);
+                        toast.success(lang === 'zh' ? '图片已插入' : 'Image inserted');
+                    }
+                } catch (err) {
+                    toast.error(err.message);
+                }
+                break;
+            }
+        }
+    };
+
+    // Sync scroll
+    const handleEditorScroll = () => {
+        if (viewMode !== 'split' || !editorRef.current || !previewRef.current) return;
+        const editor = editorRef.current;
+        const ratio = editor.scrollTop / (editor.scrollHeight - editor.clientHeight || 1);
+        const preview = previewRef.current;
+        preview.scrollTop = ratio * (preview.scrollHeight - preview.clientHeight);
+    };
+
+    if (loading) return (
+        <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+                <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-gray-400 text-sm">{t('common.loading')}</p>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col gap-2">
             {/* Top Bar */}
-            <div className="flex justify-between items-center mb-4 bg-white p-2 rounded-xl border border-gray-100 shadow-sm">
-                <div className="flex items-center gap-4">
-                     <button onClick={onBack} className="text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition-all flex items-center gap-2">
+            <div className="flex justify-between items-center bg-white px-4 py-2.5 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <button onClick={() => {
+                        if (hasUnsavedChanges && !confirm(lang === 'zh' ? '有未保存的更改，确定离开？' : 'Unsaved changes. Leave?')) return;
+                        onBack();
+                    }} className="text-gray-400 hover:text-gray-800 p-2 rounded-xl hover:bg-gray-100 transition-all flex-shrink-0">
                         <ArrowLeft size={18} />
-                        {t('common.back')}
-                     </button>
-                     <div className="h-6 w-px bg-gray-200"></div>
-                     <input 
-                        type="text" 
-                        placeholder={t('posts.editor.placeholder.title')}
-                        className="text-lg font-bold text-gray-800 border-none focus:ring-0 placeholder-gray-300 w-96 bg-transparent"
-                        value={metadata.title}
-                        onChange={e => setMetadata({...metadata, title: e.target.value})}
-                     />
-                </div>
-               
-                <div className="flex gap-2 items-center">
-                     <div className="flex bg-gray-100 p-1 rounded-lg mr-2">
-                        <button 
-                            onClick={() => setViewMode('edit')} 
-                            className={`p-1.5 rounded-md transition-all ${viewMode === 'edit' ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-                            title={t('common.edit')}
-                        >
-                            <Edit3 size={18} />
-                        </button>
-                        <button 
-                            onClick={() => setViewMode('split')} 
-                            className={`p-1.5 rounded-md transition-all ${viewMode === 'split' ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-                            title={t('posts.editor.preview')}
-                        >
-                            <Columns size={18} />
-                        </button>
-                        <button 
-                            onClick={() => setViewMode('preview')} 
-                            className={`p-1.5 rounded-md transition-all ${viewMode === 'preview' ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-                            title={t('posts.editor.preview')}
-                        >
-                            <Eye size={18} />
-                        </button>
-                     </div>
-                     <button onClick={handleSave} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium shadow-sm transition-colors flex items-center gap-2">
-                        <Save size={18} />
-                        {t('common.save')}
-                     </button>
-                </div>
-            </div>
-
-            <div className="flex-1 flex gap-4 overflow-hidden">
-                {/* Editor Pane */}
-                {(viewMode === 'edit' || viewMode === 'split') && (
-                    <div className={`flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden ${viewMode === 'split' ? 'w-1/2' : 'w-full'}`}>
-                        {/* Toolbar */}
-                        <div className="p-2 border-b bg-gray-50 flex items-center gap-1 flex-wrap">
-                            <ToolbarButton icon={Bold} onClick={() => insertText('**', '**')} label={t('posts.editor.toolbar.bold')} />
-                            <ToolbarButton icon={Italic} onClick={() => insertText('*', '*')} label={t('posts.editor.toolbar.italic')} />
-                            <div className="w-px h-4 bg-gray-300 mx-1"></div>
-                            <ToolbarButton icon={Heading1} onClick={() => insertText('# ')} label={t('posts.editor.toolbar.h1')} />
-                            <ToolbarButton icon={Heading2} onClick={() => insertText('## ')} label={t('posts.editor.toolbar.h2')} />
-                            <div className="w-px h-4 bg-gray-300 mx-1"></div>
-                            <ToolbarButton icon={List} onClick={() => insertText('- ')} label={t('posts.editor.toolbar.list')} />
-                            <ToolbarButton icon={ListOrdered} onClick={() => insertText('1. ')} label={t('posts.editor.toolbar.orderedList')} />
-                            <ToolbarButton icon={Quote} onClick={() => insertText('> ')} label={t('posts.editor.toolbar.quote')} />
-                            <ToolbarButton icon={Code} onClick={() => insertText('```\\n', '\\n```')} label={t('posts.editor.toolbar.code')} />
-                            <div className="w-px h-4 bg-gray-300 mx-1"></div>
-                            <ToolbarButton icon={LinkIcon} onClick={() => insertText('[', '](url)')} label={t('posts.editor.toolbar.link')} />
-                            <ToolbarButton icon={ImageIcon} onClick={() => insertText('![alt](', ')')} label={t('posts.editor.toolbar.image')} />
-                            <ToolbarButton icon={TableIcon} onClick={() => insertText('| Header | Header |\\n| --- | --- |\\n| Cell | Cell |')} label={t('posts.editor.toolbar.table')} />
-                        </div>
-                        
-                        <textarea 
-                            id="markdown-editor"
-                            className="flex-1 w-full p-6 font-mono text-sm resize-none focus:outline-none leading-relaxed"
-                            value={content}
-                            onChange={e => setContent(e.target.value)}
-                            placeholder={t('posts.editor.placeholder.content')}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                        <input
+                            type="text"
+                            placeholder={t('posts.editor.placeholder.title')}
+                            className="text-lg font-bold text-gray-800 border-none focus:ring-0 placeholder-gray-300 w-full bg-transparent outline-none"
+                            value={metadata.title}
+                            onChange={e => setMetadata({ ...metadata, title: e.target.value })}
                         />
                     </div>
-                )}
+                </div>
 
-                {/* Preview Pane */}
-                {(viewMode === 'preview' || viewMode === 'split') && (
-                    <div className={`bg-gray-50 rounded-xl border border-gray-200 overflow-hidden flex flex-col ${viewMode === 'split' ? 'w-1/2' : 'w-full max-w-4xl mx-auto'}`}>
-                        <div className="p-3 border-b bg-white/50 text-xs font-bold text-gray-500 uppercase tracking-wider flex justify-between items-center">
-                            <span>{t('posts.editor.preview')}</span>
-                        </div>
-                        <div className="flex-1 overflow-auto p-8 prose prose-blue max-w-none prose-img:rounded-lg">
-                            <ReactMarkdown 
-                                remarkPlugins={[remarkGfm]}
-                                rehypePlugins={[rehypeHighlight]}
+                <div className="flex gap-2 items-center flex-shrink-0">
+                    {/* Status indicator */}
+                    {hasUnsavedChanges && (
+                        <span className="text-[10px] text-amber-500 bg-amber-50 px-2 py-1 rounded-full font-medium ring-1 ring-amber-200">
+                            {lang === 'zh' ? '未保存' : 'Unsaved'}
+                        </span>
+                    )}
+                    {/* View mode */}
+                    <div className="flex bg-gray-100 p-0.5 rounded-xl">
+                        {[
+                            { mode: 'edit', icon: Edit3 },
+                            { mode: 'split', icon: Columns },
+                            { mode: 'preview', icon: Eye },
+                        ].map(({ mode, icon: VIcon }) => (
+                            <button
+                                key={mode}
+                                onClick={() => setViewMode(mode)}
+                                className={`p-1.5 rounded-lg transition-all duration-200 ${viewMode === mode ? 'bg-white shadow-sm text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
                             >
-                                {content}
-                            </ReactMarkdown>
+                                <VIcon size={15} />
+                            </button>
+                        ))}
+                    </div>
+                    {/* Sidebar toggle */}
+                    <button
+                        onClick={() => setShowSidebar(!showSidebar)}
+                        className={`p-1.5 rounded-lg transition-all ${showSidebar ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                        {showSidebar ? <PanelRightClose size={15} /> : <PanelRightOpen size={15} />}
+                    </button>
+                    {/* Save */}
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl hover:shadow-lg hover:shadow-blue-500/25 font-medium transition-all duration-300 flex items-center gap-1.5 disabled:opacity-60 text-sm"
+                    >
+                        {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+                        {t('common.save')}
+                    </button>
+                </div>
+            </div>
+
+            <div className="flex-1 flex gap-2 overflow-hidden">
+                {/* Main Editor + Preview */}
+                <div className="flex-1 flex gap-2 overflow-hidden">
+                    {/* Editor */}
+                    {(viewMode === 'edit' || viewMode === 'split') && (
+                        <div className={`flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden ${viewMode === 'split' ? 'w-1/2' : 'w-full'}`}>
+                            {/* Toolbar */}
+                            <div className="px-2 py-1.5 border-b bg-gray-50/80 flex items-center gap-0.5 flex-wrap">
+                                <ToolbarButton icon={Bold} onClick={() => insertText('**', '**')} shortcut="Ctrl+B" />
+                                <ToolbarButton icon={Italic} onClick={() => insertText('*', '*')} shortcut="Ctrl+I" />
+                                <ToolbarButton icon={Strikethrough} onClick={() => insertText('~~', '~~')} />
+                                <Sep />
+                                <ToolbarButton icon={Heading1} onClick={() => insertText('# ')} />
+                                <ToolbarButton icon={Heading2} onClick={() => insertText('## ')} />
+                                <ToolbarButton icon={Heading3} onClick={() => insertText('### ')} />
+                                <Sep />
+                                <ToolbarButton icon={List} onClick={() => insertText('- ')} />
+                                <ToolbarButton icon={ListOrdered} onClick={() => insertText('1. ')} />
+                                <ToolbarButton icon={CheckSquare} onClick={() => insertText('- [ ] ')} />
+                                <ToolbarButton icon={Quote} onClick={() => insertText('> ')} />
+                                <Sep />
+                                <ToolbarButton icon={Code} onClick={() => insertText('```\n', '\n```')} />
+                                <ToolbarButton icon={LinkIcon} onClick={() => insertText('[', '](url)')} />
+                                <ToolbarButton icon={ImageIcon} onClick={() => setShowMediaPicker(true)} />
+                                <ToolbarButton icon={TableIcon} onClick={() => insertText('| Header | Header |\n| --- | --- |\n| Cell | Cell |')} />
+                                <ToolbarButton icon={Minus} onClick={() => insertText('\n---\n')} />
+                            </div>
+
+                            {/* Textarea */}
+                            <textarea
+                                ref={editorRef}
+                                className="flex-1 w-full p-5 font-mono text-sm resize-none focus:outline-none leading-relaxed bg-white"
+                                value={content}
+                                onChange={e => setContent(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                onScroll={handleEditorScroll}
+                                onPaste={handlePaste}
+                                placeholder={t('posts.editor.placeholder.content')}
+                                spellCheck={false}
+                            />
+
+                            {/* Status bar */}
+                            <div className="px-4 py-1.5 border-t bg-gray-50/80 flex items-center gap-4 text-[11px] text-gray-400">
+                                <span className="flex items-center gap-1"><Type size={11} />{wordStats.words} {lang === 'zh' ? '词' : 'words'}</span>
+                                <span className="flex items-center gap-1"><Hash size={11} />{wordStats.chars} {lang === 'zh' ? '字符' : 'chars'}</span>
+                                <span className="flex items-center gap-1"><Clock size={11} />~{wordStats.readMin} min</span>
+                                <span className="ml-auto opacity-60">Ctrl+S {lang === 'zh' ? '保存' : 'save'}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Preview */}
+                    {(viewMode === 'preview' || viewMode === 'split') && (
+                        <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col ${viewMode === 'split' ? 'w-1/2' : 'w-full'}`}>
+                            <div className="px-4 py-2 border-b bg-gray-50/80 text-[11px] font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <Eye size={13} />
+                                {t('posts.editor.preview')}
+                            </div>
+                            <div ref={previewRef} className="flex-1 overflow-auto p-6 editor-preview">
+                                {content ? (
+                                    <ReactMarkdown
+                                        remarkPlugins={[remarkGfm]}
+                                        rehypePlugins={[rehypeHighlight]}
+                                    >
+                                        {content}
+                                    </ReactMarkdown>
+                                ) : (
+                                    <p className="text-gray-300 text-center py-16 text-sm">{lang === 'zh' ? '开始输入以预览...' : 'Start typing to preview...'}</p>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Sidebar Metadata Panel */}
+                {showSidebar && (
+                    <div className="w-72 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-auto flex-shrink-0">
+                        <div className="p-4 space-y-1">
+                            {/* Basic Info */}
+                            <SidebarSection
+                                title={lang === 'zh' ? '基本信息' : 'Basic Info'}
+                                open={sidebarSections.basic}
+                                onToggle={() => setSidebarSections(s => ({ ...s, basic: !s.basic }))}
+                            >
+                                <SidebarField label="Slug" icon={FileText}>
+                                    <input
+                                        type="text"
+                                        className="sidebar-input"
+                                        value={slugName}
+                                        onChange={e => setSlugName(e.target.value)}
+                                        disabled={slug !== 'new'}
+                                        placeholder="post-slug"
+                                    />
+                                </SidebarField>
+                                <SidebarField label={lang === 'zh' ? '日期' : 'Date'} icon={Calendar}>
+                                    <input
+                                        type="date"
+                                        className="sidebar-input"
+                                        value={metadata.published ? new Date(metadata.published).toISOString().split('T')[0] : ''}
+                                        onChange={e => setMetadata({ ...metadata, published: e.target.value })}
+                                    />
+                                </SidebarField>
+                                <SidebarField label={lang === 'zh' ? '分类' : 'Category'} icon={Folder}>
+                                    <input
+                                        type="text"
+                                        className="sidebar-input"
+                                        value={metadata.category || ''}
+                                        onChange={e => setMetadata({ ...metadata, category: e.target.value })}
+                                        placeholder={t('posts.editor.placeholder.category')}
+                                    />
+                                </SidebarField>
+                                <SidebarField label={lang === 'zh' ? '标签' : 'Tags'} icon={Tag}>
+                                    <input
+                                        type="text"
+                                        className="sidebar-input"
+                                        value={metadata.tags}
+                                        onChange={e => setMetadata({ ...metadata, tags: e.target.value })}
+                                        placeholder={t('posts.editor.placeholder.tags')}
+                                    />
+                                    {metadata.tags && (
+                                        <div className="flex flex-wrap gap-1 mt-1.5">
+                                            {(typeof metadata.tags === 'string' ? metadata.tags.split(',') : metadata.tags).map((tag, i) => {
+                                                const t = (tag || '').trim();
+                                                if (!t) return null;
+                                                return <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[10px] font-medium">{t}</span>;
+                                            })}
+                                        </div>
+                                    )}
+                                </SidebarField>
+                            </SidebarSection>
+
+                            {/* SEO */}
+                            <SidebarSection
+                                title="SEO"
+                                open={sidebarSections.seo}
+                                onToggle={() => setSidebarSections(s => ({ ...s, seo: !s.seo }))}
+                            >
+                                <SidebarField label={lang === 'zh' ? '描述' : 'Description'} icon={AlignLeft}>
+                                    <textarea
+                                        className="sidebar-input min-h-[60px] resize-none"
+                                        value={metadata.description || ''}
+                                        onChange={e => setMetadata({ ...metadata, description: e.target.value })}
+                                        placeholder={lang === 'zh' ? '文章摘要...' : 'Post description...'}
+                                        rows={2}
+                                    />
+                                    {metadata.description && (
+                                        <p className="text-[10px] text-gray-400 mt-1">{metadata.description.length}/160</p>
+                                    )}
+                                </SidebarField>
+                                <SidebarField label={lang === 'zh' ? '封面图' : 'Cover'} icon={FileImage}>
+                                    <div className="flex gap-1.5">
+                                        <input
+                                            type="text"
+                                            className="sidebar-input flex-1"
+                                            value={metadata.image || ''}
+                                            onChange={e => setMetadata({ ...metadata, image: e.target.value })}
+                                            placeholder="./cover.jpg"
+                                        />
+                                        <button
+                                            onClick={() => setShowMediaPicker(true)}
+                                            className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors flex-shrink-0"
+                                        >
+                                            <ImageIcon size={14} />
+                                        </button>
+                                    </div>
+                                </SidebarField>
+                            </SidebarSection>
+
+                            {/* Publish Options */}
+                            <SidebarSection
+                                title={lang === 'zh' ? '发布选项' : 'Publish'}
+                                open={sidebarSections.publish}
+                                onToggle={() => setSidebarSections(s => ({ ...s, publish: !s.publish }))}
+                            >
+                                <div className="space-y-2.5">
+                                    <ToggleRow
+                                        label={lang === 'zh' ? '草稿' : 'Draft'}
+                                        checked={metadata.draft}
+                                        onChange={v => setMetadata({ ...metadata, draft: v })}
+                                        color="amber"
+                                    />
+                                    <ToggleRow
+                                        label={lang === 'zh' ? '置顶' : 'Pinned'}
+                                        checked={metadata.pinned}
+                                        onChange={v => setMetadata({ ...metadata, pinned: v })}
+                                        color="blue"
+                                        icon={Pin}
+                                    />
+                                </div>
+                            </SidebarSection>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Bottom Metadata Bar */}
-            <div className="mt-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-6 items-center flex-wrap text-sm">
-                 <div className="flex items-center gap-2">
-                    <span className="text-gray-500">{t('posts.editor.slug')}:</span>
-                    <input 
-                        type="text" 
-                        className="border-b border-gray-200 focus:border-blue-500 outline-none px-1 py-0.5"
-                        value={slugName}
-                        onChange={e => setSlugName(e.target.value)}
-                        disabled={slug !== 'new'}
-                    />
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-gray-500">{t('posts.editor.date')}:</span>
-                    <input 
-                        type="date" 
-                        className="bg-transparent border-b border-gray-200 focus:border-blue-500 outline-none px-1 py-0.5"
-                        value={metadata.published ? new Date(metadata.published).toISOString().split('T')[0] : ''}
-                        onChange={e => setMetadata({...metadata, published: e.target.value})}
-                    />
-                </div>
-                 <div className="flex items-center gap-2">
-                    <span className="text-gray-500">{t('posts.editor.category')}:</span>
-                    <input 
-                        type="text" 
-                        className="bg-transparent border-b border-gray-200 focus:border-blue-500 outline-none px-1 py-0.5 w-32"
-                        value={metadata.category || ''}
-                        onChange={e => setMetadata({...metadata, category: e.target.value})}
-                        placeholder={t('posts.editor.placeholder.category')}
-                    />
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-gray-500">{t('posts.editor.tags')}:</span>
-                    <input 
-                        type="text" 
-                        className="bg-transparent border-b border-gray-200 focus:border-blue-500 outline-none px-1 py-0.5 w-48"
-                        value={metadata.tags}
-                        onChange={e => setMetadata({...metadata, tags: e.target.value})}
-                        placeholder={t('posts.editor.placeholder.tags')}
-                    />
-                </div>
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input 
-                        type="checkbox" 
-                        className="rounded text-blue-600 focus:ring-blue-500"
-                        checked={metadata.draft}
-                        onChange={e => setMetadata({...metadata, draft: e.target.checked})}
-                    />
-                    <span className="text-gray-700">{t('posts.editor.draft')}</span>
-                </label>
-            </div>
+            {/* Media Picker Modal */}
+            {showMediaPicker && (
+                <MediaPicker
+                    onSelect={handleMediaSelect}
+                    onClose={() => setShowMediaPicker(false)}
+                />
+            )}
+
+            {/* Inline styles for sidebar inputs */}
+            <style>{`
+                .sidebar-input {
+                    width: 100%;
+                    background: #f9fafb;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    padding: 6px 10px;
+                    font-size: 12px;
+                    color: #374151;
+                    outline: none;
+                    transition: all 0.15s;
+                }
+                .sidebar-input:focus {
+                    border-color: #6366f1;
+                    box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+                    background: white;
+                }
+                .sidebar-input:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+            `}</style>
         </div>
     );
 }
 
-function ToolbarButton({ icon: Icon, onClick, label }) {
+/* Sub-components */
+
+function SidebarSection({ title, open, onToggle, children }) {
     return (
-        <button 
-            onClick={onClick}
-            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-            title={label}
+        <div className="border-b border-gray-100 last:border-0 pb-3 mb-1">
+            <button
+                onClick={onToggle}
+                className="flex items-center justify-between w-full py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-gray-700 transition-colors"
+            >
+                <span>{title}</span>
+                {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </button>
+            {open && <div className="space-y-3 mt-1">{children}</div>}
+        </div>
+    );
+}
+
+function SidebarField({ label, icon: Icon, children }) {
+    return (
+        <div>
+            <label className="flex items-center gap-1.5 text-[11px] font-medium text-gray-500 mb-1">
+                {Icon && <Icon size={12} className="text-gray-400" />}
+                {label}
+            </label>
+            {children}
+        </div>
+    );
+}
+
+function ToggleRow({ label, checked, onChange, color = 'blue', icon: Icon }) {
+    const colors = {
+        blue: { bg: 'bg-blue-500', ring: 'ring-blue-200' },
+        amber: { bg: 'bg-amber-500', ring: 'ring-amber-200' },
+    };
+    const c = colors[color] || colors.blue;
+
+    return (
+        <button
+            onClick={() => onChange(!checked)}
+            className="flex items-center justify-between w-full group"
         >
-            <Icon size={16} />
+            <span className="flex items-center gap-1.5 text-xs text-gray-600">
+                {Icon && <Icon size={13} className="text-gray-400" />}
+                {label}
+            </span>
+            <div className={`w-9 h-5 rounded-full transition-all duration-200 relative ${checked ? c.bg : 'bg-gray-200'} ${checked ? `ring-2 ${c.ring}` : ''}`}>
+                <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-200 ${checked ? 'left-[18px]' : 'left-0.5'}`} />
+            </div>
         </button>
-    )
+    );
+}
+
+function ToolbarButton({ icon: Icon, onClick, shortcut }) {
+    return (
+        <button
+            onClick={onClick}
+            className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-150"
+            title={shortcut || undefined}
+        >
+            <Icon size={15} />
+        </button>
+    );
+}
+
+function Sep() {
+    return <div className="w-px h-4 bg-gray-200 mx-1" />;
 }

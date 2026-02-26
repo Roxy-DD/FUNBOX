@@ -4,7 +4,7 @@ export default {
     settings: "Settings",
     posts: "Posts",
     save: "Save",
-    saved: "Saved!",
+    saved: "Saved successfully!",
     cancel: "Cancel",
     confirm: "Confirm",
     back: "Back",
@@ -17,7 +17,6 @@ export default {
     viewAll: "View All",
     noActivity: "No activity yet.",
     comingSoon: "Coming Soon",
-    dashboard: "Dashboard",
     stats: {
         totalPosts: "Total Posts",
         published: "Published",
@@ -32,12 +31,18 @@ export default {
         media: "Media Library",
         preview: "View Site"
     },
+    activity: {
+        title: "Recent Activity"
+    },
     media: {
         title: "Media Library",
         upload: "Upload Image",
         dragDrop: "Drag & Drop images here or click to upload",
         copySuccess: "Link Copied",
         deleteConfirm: "Are you sure you want to delete this image?",
+        empty: "No media files yet",
+        items: "items",
+        uploading: "Uploading..."
     },
     tabs: {
       general: "General",
@@ -135,8 +140,6 @@ export default {
       reorderTip: "Reordering is coming soon. Use JSON editor for now.",
       faviconTip: "Configure favicon paths in JSON for advanced array control.",
       scriptTagTip: "Full script tag usually",
-      
-      // Advanced
       bannerAdvanced: "Advanced Banner Settings",
       enableWaves: "Enable Waves",
       performanceMode: "Performance Mode",
@@ -150,14 +153,12 @@ export default {
       mode: "Mode",
       metingApi: "Meting API URL",
       sakuraNum: "Sakura Count",
-      zIndex: "Z-Index",
       speed: "Typing Speed",
       bangumiUserId: "Bangumi User ID",
       localData: "Local Data",
       bangumiApi: "Bangumi API",
       sidebarPosition: "Sidebar Position",
       components: "Sidebar Components",
-      mode: "Mode",
       depth: "Depth",
       fontWeight: "Font Weight",
       enableCompress: "Enable Compression",
@@ -168,7 +169,6 @@ export default {
       height: "Height",
       websiteId: "Website ID",
       typewriter: "Typewriter Effect",
-      speed: "Speed",
       linkTarget: "Announcement Link Button",
       url: "URL"
     },
@@ -179,6 +179,7 @@ export default {
       title: "Title",
       date: "Date",
       category: "Category",
+      tags: "Tags",
       status: "Status",
       actions: "Actions"
     },
@@ -191,13 +192,13 @@ export default {
       editPost: "Edit Post",
       metadata: "Metadata",
       content: "Content (Markdown)",
-      slug: "Slug (Filename)",
+      slug: "Slug",
       title: "Title",
       description: "Description",
       date: "Date",
       category: "Category",
       tags: "Tags",
-      coverImage: "Cover Image URL",
+      coverImage: "Cover Image",
       draft: "Draft",
       pinned: "Pinned",
       slugRequired: "Slug is required",
@@ -217,11 +218,15 @@ export default {
       },
       placeholder: {
           content: "# Start writing your masterpiece...",
-          tags: "Tags...",
+          tags: "tag1, tag2, ...",
           category: "Uncategorized",
-          title: "Title"
+          title: "Untitled Post"
       },
-      preview: "Preview"
+      preview: "Preview",
+      mediaPicker: {
+          selectHint: "Select an image to insert",
+          insert: "Insert Image"
+      }
     },
     filter: {
       search: "Search posts...",
@@ -240,5 +245,42 @@ export default {
     },
     empty: "No posts found",
     noResults: "No matching posts"
+  },
+  settings: {
+    title: "Settings",
+    tabs: {
+      general: "General",
+      appearance: "Appearance",
+      layout: "Layout",
+      components: "Components",
+      features: "Features",
+      advanced: "Advanced (JSON)"
+    },
+    jsonTip: "Directly edit the underlying JSON configuration. Changes allow for advanced customizations not yet supported in the UI."
+  },
+  media: {
+    title: "Media Library",
+    upload: "Upload Image",
+    dragDrop: "Drag & Drop images here or click to upload",
+    copySuccess: "Link Copied!",
+    deleteConfirm: "Are you sure you want to delete this image?",
+    empty: "No media files yet",
+    items: "items",
+    uploading: "Uploading..."
+  },
+  topbar: {
+    syncToRemote: "Sync to Remote",
+    syncing: "Syncing...",
+    syncSuccess: "Successfully synced to remote!",
+    syncFailed: "Sync failed"
+  },
+  git: {
+    status: "Git Sync",
+    hasChanges: "{{count}} files changed",
+    noChanges: "Everything is up to date",
+    syncing: "Syncing...",
+    syncNow: "Sync Now",
+    success: "Synced successfully!",
+    error: "Sync failed"
   }
 };

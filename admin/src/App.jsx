@@ -9,6 +9,7 @@ import DataProjects from './pages/DataProjects';
 import DataSkills from './pages/DataSkills';
 import DataTimeline from './pages/DataTimeline';
 import { LanguageProvider } from './context/LanguageContext';
+import { ToastProvider } from './context/ToastContext';
 
 function AdminLayout() {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -22,7 +23,7 @@ function AdminLayout() {
                 
                 <main className="flex-1 overflow-auto p-6 md:p-8">
                     <div className="max-w-7xl mx-auto h-full">
-                        {activeTab === 'dashboard' && <Dashboard />}
+                        {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
                         {activeTab === 'media' && <Media />}
                         {activeTab === 'settings' && <Settings />}
                         {activeTab === 'posts' && <Posts />}
@@ -39,7 +40,9 @@ function AdminLayout() {
 export default function App() {
     return (
         <LanguageProvider>
-            <AdminLayout />
+            <ToastProvider>
+                <AdminLayout />
+            </ToastProvider>
         </LanguageProvider>
     );
 }
