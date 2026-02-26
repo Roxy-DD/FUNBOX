@@ -231,22 +231,32 @@ app.post('/api/git/sync', async (req, res) => {
     const { message } = req.body;
     const commitMessage = message || `Update content via Admin: ${new Date().toISOString()}`;
     
+    const { stdout: branchStdout } = await execPromise('git branch --show-current', { cwd: PROJECT_ROOT });
+    const currentBranch = branchStdout.trim() || 'master';
+
     // 1. Add all changes
     await execPromise('git add .', { cwd: PROJECT_ROOT });
     
     // 2. Commit
-    await execPromise(`git commit -m "${commitMessage}"`, { cwd: PROJECT_ROOT });
+    try {
+        await execPromise(`git commit -m "${commitMessage}"`, { cwd: PROJECT_ROOT });
+    } catch (e) {
+        // Ignore nothing to commit
+    }
+
+    // 3. Pull latest changes (auto resolving conflicts keeping local edits)
+    try {
+        await execPromise(`git pull origin ${currentBranch} --no-edit -s recursive -X ours`, { cwd: PROJECT_ROOT });
+    } catch (e) {
+        console.warn('Git pull warning:', e.message);
+    }
     
-    // 3. Push
-    await execPromise('git push', { cwd: PROJECT_ROOT });
+    // 4. Push
+    await execPromise(`git push origin ${currentBranch}`, { cwd: PROJECT_ROOT });
     
     res.json({ success: true, message: 'Synced successfully' });
   } catch (error) {
     console.error('Git sync error:', error);
-    // If nothing to commit, it might fail, but that's okay to report
-    if (error.stdout && error.stdout.includes('nothing to commit')) {
-        return res.json({ success: true, message: 'Nothing to commit' });
-    }
     res.status(500).json({ error: error.message || 'Failed to sync' });
   }
 });
@@ -254,22 +264,32 @@ app.post('/api/git/sync', async (req, res) => {
 // API: Push Posts (Simplified - Fixed commit message)
 app.post('/api/git/push-posts', async (req, res) => {
   try {
+    const { stdout: branchStdout } = await execPromise('git branch --show-current', { cwd: PROJECT_ROOT });
+    const currentBranch = branchStdout.trim() || 'master';
+
     // 1. Add all changes
     await execPromise('git add .', { cwd: PROJECT_ROOT });
     
     // 2. Commit with fixed message
-    await execPromise('git commit -m "add posts"', { cwd: PROJECT_ROOT });
+    try {
+        await execPromise('git commit -m "add posts"', { cwd: PROJECT_ROOT });
+    } catch (e) {
+        // Ignore nothing to commit
+    }
+
+    // 3. Pull latest changes (auto resolving conflicts keeping local edits)
+    try {
+        await execPromise(`git pull origin ${currentBranch} --no-edit -s recursive -X ours`, { cwd: PROJECT_ROOT });
+    } catch (e) {
+        console.warn('Git pull warning:', e.message);
+    }
     
-    // 3. Push
-    await execPromise('git push origin master', { cwd: PROJECT_ROOT });
+    // 4. Push
+    await execPromise(`git push origin ${currentBranch}`, { cwd: PROJECT_ROOT });
     
     res.json({ success: true, message: 'Pushed successfully' });
   } catch (error) {
     console.error('Git push error:', error);
-    // If nothing to commit, it might fail
-    if (error.stdout && error.stdout.includes('nothing to commit')) {
-        return res.json({ success: true, message: 'Nothing to commit' });
-    }
     res.status(500).json({ error: error.message || 'Failed to push' });
   }
 });
