@@ -212,12 +212,18 @@ app.delete('/api/media/:filename', async (req, res) => {
 // API: Git Status
 app.get('/api/git/status', async (req, res) => {
   try {
-    const { stdout } = await execPromise('git status --porcelain', { cwd: PROJECT_ROOT });
+    const { stdout } = await execPromise('git status --porcelain -b', { cwd: PROJECT_ROOT });
     const { stdout: branch } = await execPromise('git branch --show-current', { cwd: PROJECT_ROOT });
+    
+    const lines = stdout.split('\n').filter(Boolean);
+    const branchInfo = lines.length > 0 ? lines[0] : '';
+    const hasUncommitted = lines.length > 1;
+    const isAhead = branchInfo.includes('[ahead');
+    
     res.json({ 
-      hasChanges: stdout.trim().length > 0,
+      hasChanges: hasUncommitted || isAhead,
       branch: branch.trim(),
-      changes: stdout.split('\n').filter(Boolean)
+      changes: hasUncommitted ? lines.slice(1) : (isAhead ? ['Unpushed commits exist'] : [])
     });
   } catch (error) {
     console.error('Git status error:', error);
